@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Player",
+  "type": "object",
+  "required": ["id", "name", "position", "rating", "fitness", "profile"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "description": "UUID v4. Matches the players/<uuid>/ folder name." },
+    "name": { "type": "string" },
+    "aliases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Other names this player is called by, used when resolving a name list."
+    },
+    "position": {
+      "type": "string",
+      "enum": ["GK", "DEF", "MID", "ATT"],
+      "description": "Primary position. Secondary positions belong in profile."
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Relative to this group only. 1 = weakest player in the group, 10 = strongest. Not an absolute skill level. Half points allowed."
+    },
+    "fitness": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Relative stamina over a full game. Half points allowed."
+    },
+    "profile": {
+      "type": "string",
+      "description": "Prose description: style of play, strengths, weaknesses, who they work well with."
+    },
+    "created_at": { "type": "string", "format": "date" },
+    "updated_at": { "type": "string", "format": "date" }
+  }
+}

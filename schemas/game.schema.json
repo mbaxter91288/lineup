@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Game",
+  "type": "object",
+  "required": ["id", "date", "format", "teams", "score"],
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string", "description": "UUID v4. Matches the games/<uuid>/ folder name." },
+    "date": { "type": "string", "format": "date", "description": "YYYY-MM-DD." },
+    "format": { "type": "string", "description": "e.g. \"8v8\", \"9v9\"." },
+    "teams": {
+      "type": "object",
+      "required": ["bibs", "non_bibs"],
+      "additionalProperties": false,
+      "properties": {
+        "bibs": { "type": "array", "items": { "type": "string" }, "description": "Player UUIDs." },
+        "non_bibs": { "type": "array", "items": { "type": "string" }, "description": "Player UUIDs." }
+      }
+    },
+    "score": {
+      "type": "object",
+      "required": ["bibs", "non_bibs"],
+      "additionalProperties": false,
+      "properties": {
+        "bibs": { "type": ["integer", "null"], "minimum": 0 },
+        "non_bibs": { "type": ["integer", "null"], "minimum": 0 }
+      },
+      "description": "Null until the game has been played and the result recorded."
+    },
+    "notes": {
+      "type": "string",
+      "description": "How the game actually went: was it even, who stood out, who faded, late swaps."
+    }
+  }
+}
