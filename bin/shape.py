@@ -50,7 +50,23 @@ BANKS = {
 }
 
 
-def roles_for_shape(shape: str) -> list[str]:
+# Below eleven a side, nobody is moved out of their general position to fill a
+# formation: the shape is whatever the players' positions add up to.
+FULL_SIDE = 11
+CENTRAL = {"DEF": "CB", "MID": "CM", "ATT": "ST"}
+
+
+def bank(zone: str, count: int) -> list[str]:
+    """The roles for a bank of `count`, widening the centre past the largest named bank."""
+    if count in BANKS[zone]:
+        return list(BANKS[zone][count])
+    roles = list(BANKS[zone][max(BANKS[zone])])
+    while len(roles) < count:
+        roles.insert(len(roles) // 2, CENTRAL[zone])
+    return roles
+
+
+def roles_for_shape(shape: str, *, strict: bool = True) -> list[str]:
     """Turn "4-5-1" into the roles that make it up."""
     banks = [int(part) for part in shape.split("-")]
     if len(banks) != 3:
@@ -59,10 +75,25 @@ def roles_for_shape(shape: str) -> list[str]:
     for zone, count in zip(("DEF", "MID", "ATT"), banks):
         if count == 0:
             continue
-        if count not in BANKS[zone]:
+        if strict and count not in BANKS[zone]:
             raise ValueError(f"No {zone} bank of {count} — pick a shape closer to eleven a side")
-        roles += BANKS[zone][count]
+        roles += bank(zone, count)
     return roles
+
+
+def outfield_zone(player: dict) -> str:
+    """Where an outfield player plays: a goalkeeper who is not in goal drops to defence."""
+    zone = player_zone(player)
+    return "DEF" if zone == "GK" else zone
+
+
+def shape_from_positions(outfield: list[dict], pinned: dict[str, str]) -> str:
+    """The shape the players' own positions make, counting a pinned player in the
+    zone of the role he has been pinned to."""
+    counts = {"DEF": 0, "MID": 0, "ATT": 0}
+    for p in outfield:
+        counts[ZONES[pinned[p["id"]]] if p["id"] in pinned else outfield_zone(p)] += 1
+    return f"{counts['DEF']}-{counts['MID']}-{counts['ATT']}"
 
 
 def formation_for(count: int, shape: str | None = None) -> list[str]:
@@ -130,23 +161,38 @@ def assign(team: list[dict], *, shape: str | None = None,
     roles_by_player = roles_by_player or {}
     keeper = pick_keeper(team)
     outfield = [p for p in team if p["id"] != keeper["id"]]
-    roles = formation_for(len(outfield), shape)
-
     pinned = {p["id"]: roles_by_player[p["id"]] for p in outfield if p["id"] in roles_by_player}
+
+    keep_zones = shape is None and len(team) < FULL_SIDE
+    if keep_zones:
+        roles = roles_for_shape(shape_from_positions(outfield, pinned), strict=False)
+    else:
+        roles = formation_for(len(outfield), shape)
+
     for role in pinned.values():
         if role in roles:
             roles.remove(role)
         else:
-            # Free up a slot from whichever bank has most to spare.
-            zone = max(("DEF", "MID", "ATT"),
-                       key=lambda z: sum(1 for r in roles if ZONES[r] == z))
+            # Free up a slot in the pinned role's own bank, or else from
+            # whichever bank has most to spare.
+            zone = ZONES[role]
+            if not any(ZONES[r] == zone for r in roles):
+                zone = max(("DEF", "MID", "ATT"),
+                           key=lambda z: sum(1 for r in roles if ZONES[r] == z))
             spare = [r for r in roles if ZONES[r] == zone]
             roles.remove(spare[len(spare) // 2])
     free = [p for p in outfield if p["id"] not in pinned]
 
+    def fit(player: dict, role: str) -> float:
+        # Each bank holds exactly the players of that position, so a role outside
+        # a player's own zone is effectively off limits.
+        if keep_zones and ZONES[role] != outfield_zone(player):
+            return 1000.0 + role_cost(player, role)
+        return role_cost(player, role)
+
     # Greedy on the cheapest player/role pairs, then swap pairs while it helps.
     order = sorted(
-        ((role_cost(p, role), i, j) for i, p in enumerate(free) for j, role in enumerate(roles))
+        ((fit(p, role), i, j) for i, p in enumerate(free) for j, role in enumerate(roles))
     )
     taken_players: set[int] = set()
     taken_roles: set[int] = set()
@@ -165,8 +211,8 @@ def assign(team: list[dict], *, shape: str | None = None,
             for b in list(pairing):
                 if a >= b:
                     continue
-                now = role_cost(free[a], roles[pairing[a]]) + role_cost(free[b], roles[pairing[b]])
-                swapped = role_cost(free[a], roles[pairing[b]]) + role_cost(free[b], roles[pairing[a]])
+                now = fit(free[a], roles[pairing[a]]) + fit(free[b], roles[pairing[b]])
+                swapped = fit(free[a], roles[pairing[b]]) + fit(free[b], roles[pairing[a]])
                 if swapped < now - 1e-9:
                     pairing[a], pairing[b] = pairing[b], pairing[a]
                     improved = True

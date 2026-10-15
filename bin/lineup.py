@@ -96,10 +96,10 @@ VET_LABELS = {"none": "", "veteran": "Vet", "senior": "Senior vet"}
 
 # What a rating is made of. Ability carries it; legs and effort move it around.
 # Named apart from the W_* cost weights below, which are a different currency.
-# 0.7 / 0.2 / 0.3 in feel, normalised so they sum to 1.0 and nothing clamps at 10.
-MIX_ABILITY = 0.58
-MIX_FITNESS = 0.17
-MIX_WORKRATE = 0.25
+# Ability is most of it; the weights sum to 1.0 so nothing clamps at 10.
+MIX_ABILITY = 0.70
+MIX_FITNESS = 0.12
+MIX_WORKRATE = 0.18
 
 # A band is a range, not a point. Its named value is the middle of it, and a
 # player can be nudged either way inside the band without leaving it: two

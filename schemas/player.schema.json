@@ -133,7 +133,7 @@
       ],
       "minimum": 1,
       "maximum": 10,
-      "description": "Set this only when ability, fitness, workrate and veteran level do not add up to how much you actually want the player in your team. When null the rating is derived as 0.58 x ability + 0.17 x fitness + 0.25 x workrate, plus 0.5 if he is a captain, all scaled by the veteran modifier. This is the number the balancer weights most heavily either way."
+      "description": "Set this only when ability, fitness, workrate and veteran level do not add up to how much you actually want the player in your team. When null the rating is derived as 0.70 x ability + 0.12 x fitness + 0.18 x workrate, plus 0.5 if he is a captain, all scaled by the veteran modifier. This is the number the balancer weights most heavily either way."
     },
     "workrate": {
       "type": "string",
