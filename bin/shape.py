@@ -114,12 +114,13 @@ def player_zone(player: dict) -> str:
     return "GK" if player.get("permanent_keeper") else player["position"]
 
 
-def covers(player: dict, zone: str) -> bool:
-    """Whether this player can be counted on in a zone, by general position or by
-    a role they have said they are happy in."""
+def covers(player: dict, zone: str, *, preferences: bool = True) -> bool:
+    """Whether this player can be counted on in a zone, by general position or,
+    at eleven a side, by a role they have said they are happy in."""
     if player_zone(player) == zone:
         return True
-    return any(ZONES.get(role) == zone for role in player.get("preferred_positions", []))
+    return preferences and any(ZONES.get(role) == zone
+                               for role in player.get("preferred_positions", []))
 
 
 def role_cost(player: dict, role: str) -> float:
@@ -184,11 +185,14 @@ def assign(team: list[dict], *, shape: str | None = None,
     free = [p for p in outfield if p["id"] not in pinned]
 
     def fit(player: dict, role: str) -> float:
-        # Each bank holds exactly the players of that position, so a role outside
-        # a player's own zone is effectively off limits.
-        if keep_zones and ZONES[role] != outfield_zone(player):
-            return 1000.0 + role_cost(player, role)
-        return role_cost(player, role)
+        # Below eleven a side each bank holds exactly the players of that position,
+        # a role outside a player's own zone is off limits, and preferred roles
+        # play no part: within his bank, one role is as good as another.
+        if not keep_zones:
+            return role_cost(player, role)
+        if ZONES[role] != outfield_zone(player):
+            return 1000.0
+        return 500.0 if role in player.get("negative_positions", []) else 0.0
 
     # Greedy on the cheapest player/role pairs, then swap pairs while it helps.
     order = sorted(
