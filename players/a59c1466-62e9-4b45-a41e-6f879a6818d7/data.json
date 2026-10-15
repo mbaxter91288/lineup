@@ -1,0 +1,23 @@
+{
+  "id": "a59c1466-62e9-4b45-a41e-6f879a6818d7",
+  "name": "Ryan Springell",
+  "aliases": [],
+  "position": "DEF",
+  "preferred_positions": [
+    "CB",
+    "RB"
+  ],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "ability": "recreational",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "engine",
+  "profile": "Not a natural footballer, but strong and very fit. Always a good player to have on your team.",
+  "created_at": "2026-08-27",
+  "updated_at": "2026-08-28",
+  "workrate": "relentless",
+  "ability_value": 4.0,
+  "fitness_value": 9.0,
+  "workrate_value": 8.0
+}

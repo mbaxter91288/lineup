@@ -2,34 +2,251 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Game",
   "type": "object",
-  "required": ["id", "date", "format", "teams", "score"],
+  "required": [
+    "id",
+    "date",
+    "format",
+    "teams",
+    "score"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": { "type": "string", "description": "UUID v4. Matches the games/<uuid>/ folder name." },
-    "date": { "type": "string", "format": "date", "description": "YYYY-MM-DD." },
-    "format": { "type": "string", "description": "e.g. \"8v8\", \"9v9\"." },
+    "id": {
+      "type": "string",
+      "description": "UUID v4. Matches the games/<uuid>/ folder name."
+    },
+    "date": {
+      "type": "string",
+      "format": "date",
+      "description": "YYYY-MM-DD."
+    },
+    "format": {
+      "type": "string",
+      "description": "e.g. \"8v8\", \"9v9\"."
+    },
     "teams": {
       "type": "object",
-      "required": ["bibs", "non_bibs"],
+      "required": [
+        "bibs",
+        "non_bibs"
+      ],
       "additionalProperties": false,
       "properties": {
-        "bibs": { "type": "array", "items": { "type": "string" }, "description": "Player UUIDs." },
-        "non_bibs": { "type": "array", "items": { "type": "string" }, "description": "Player UUIDs." }
+        "bibs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Player UUIDs, or guest ids."
+        },
+        "non_bibs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Player UUIDs, or guest ids."
+        }
       }
     },
     "score": {
       "type": "object",
-      "required": ["bibs", "non_bibs"],
+      "required": [
+        "bibs",
+        "non_bibs"
+      ],
       "additionalProperties": false,
       "properties": {
-        "bibs": { "type": ["integer", "null"], "minimum": 0 },
-        "non_bibs": { "type": ["integer", "null"], "minimum": 0 }
+        "bibs": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "non_bibs": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        }
       },
       "description": "Null until the game has been played and the result recorded."
     },
     "notes": {
       "type": "string",
       "description": "How the game actually went: was it even, who stood out, who faded, late swaps."
+    },
+    "location": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Venue name, e.g. \"Vandyke School\"."
+        },
+        "town": {
+          "type": "string"
+        },
+        "maps_url": {
+          "type": "string",
+          "description": "Google Maps search link for the venue."
+        }
+      }
+    },
+    "goals": {
+      "type": "array",
+      "description": "Who scored, once the game has been played. One entry per player per kind of goal, so a player who scored twice and put one through their own net has two entries. An own goal counts for the other team.",
+      "items": {
+        "type": "object",
+        "required": [
+          "player",
+          "goals"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "player": {
+            "type": "string",
+            "description": "Player UUID."
+          },
+          "goals": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "own_goal": {
+            "type": "boolean",
+            "description": "True when these went in at the wrong end, and count for the other team."
+          }
+        }
+      }
+    },
+    "lineup": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Manual adjustments to the shapes picked automatically. Anything not pinned is still filled in around them.",
+      "properties": {
+        "bibs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "type": "string",
+              "description": "Formation, e.g. \"4-4-2\" or \"4-5-1\"."
+            },
+            "roles": {
+              "type": "object",
+              "description": "Player UUID to the role they have been pinned to.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "non_bibs": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shape": {
+              "type": "string",
+              "description": "Formation, e.g. \"4-4-2\" or \"4-5-1\"."
+            },
+            "roles": {
+              "type": "object",
+              "description": "Player UUID to the role they have been pinned to.",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "guests": {
+      "type": "array",
+      "description": "One-off players with no record in players/. Each is a snapshot taken when the teams were picked, with every band at the average of the named players, and is listed in a team by its id.",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "position",
+          "ability",
+          "fitness",
+          "workrate"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "\"guest-\" plus the name, e.g. \"guest-plus-1\"."
+          },
+          "name": {
+            "type": "string"
+          },
+          "guest": {
+            "const": true
+          },
+          "position": {
+            "type": "string",
+            "enum": [
+              "GK",
+              "DEF",
+              "MID",
+              "ATT"
+            ]
+          },
+          "vet": {
+            "type": "string",
+            "enum": [
+              "none",
+              "veteran",
+              "senior"
+            ]
+          },
+          "ability": {
+            "type": "string",
+            "enum": [
+              "recreational",
+              "sunday_league",
+              "saturday",
+              "semi_pro"
+            ],
+            "description": "The band the averaged ability falls in."
+          },
+          "ability_value": {
+            "type": "number"
+          },
+          "fitness": {
+            "type": "string",
+            "enum": [
+              "low",
+              "moderate",
+              "good",
+              "engine"
+            ],
+            "description": "The band the averaged fitness falls in."
+          },
+          "fitness_value": {
+            "type": "number"
+          },
+          "workrate": {
+            "type": "string",
+            "enum": [
+              "passenger",
+              "steady",
+              "grafter",
+              "relentless"
+            ],
+            "description": "The band the averaged workrate falls in."
+          },
+          "workrate_value": {
+            "type": "number"
+          }
+        }
+      }
     }
   }
 }

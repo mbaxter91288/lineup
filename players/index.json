@@ -1,3 +1,153 @@
 {
-  "players": []
+  "players": [
+    {
+      "id": "1a48b106-6036-4007-b64b-f6da2101170e",
+      "name": "Abdi Pele",
+      "aliases": []
+    },
+    {
+      "id": "a60e54d7-d2bc-4b85-8257-55b7d4b4b45b",
+      "name": "Adam Slough",
+      "aliases": []
+    },
+    {
+      "id": "91d995cb-be93-4092-a562-4e93a775c036",
+      "name": "Alex McConnell",
+      "aliases": []
+    },
+    {
+      "id": "bc0cc4c7-3215-43c7-820b-7c6516fffbeb",
+      "name": "Alex S",
+      "aliases": []
+    },
+    {
+      "id": "4db4e4f8-e007-4444-bc85-41b0516d290f",
+      "name": "Anton Thompson",
+      "aliases": []
+    },
+    {
+      "id": "381f9fe7-d17f-4cfc-987c-5a68e8debb78",
+      "name": "Callum Miller",
+      "aliases": []
+    },
+    {
+      "id": "b7a6e61f-95c3-46af-846f-7f9a761c4326",
+      "name": "Chris Stop",
+      "aliases": []
+    },
+    {
+      "id": "9a8c1dd1-85aa-4fe6-a151-c477c0f0b6f3",
+      "name": "Cristian Paslaru",
+      "aliases": []
+    },
+    {
+      "id": "aec886f0-c81c-45d4-bc43-2ba64c6f5bdc",
+      "name": "Dan Bourn",
+      "aliases": []
+    },
+    {
+      "id": "bc3e9361-9a5a-4d97-89ca-bb391a0e2250",
+      "name": "David Potter",
+      "aliases": []
+    },
+    {
+      "id": "3e75cc48-26e8-4114-8516-f09bbf324897",
+      "name": "David Pugh",
+      "aliases": [
+        "Pugh"
+      ]
+    },
+    {
+      "id": "22fe1c66-ade0-4d88-898f-eb7430a6c991",
+      "name": "Hamza Hirsi",
+      "aliases": []
+    },
+    {
+      "id": "5f4e4d2a-1f06-4441-b310-edcd662ba003",
+      "name": "Harrison Drakard",
+      "aliases": []
+    },
+    {
+      "id": "c236f84e-63b4-41cf-823b-bdde44dea683",
+      "name": "Harry Felmingham",
+      "aliases": []
+    },
+    {
+      "id": "bf8b66bd-8a8f-42de-96e1-cfdfa1de8233",
+      "name": "Joe Peacock",
+      "aliases": []
+    },
+    {
+      "id": "6c9c2a61-1396-4911-9845-e1d07503ef9a",
+      "name": "John Bassil",
+      "aliases": []
+    },
+    {
+      "id": "debd93c3-fa82-4b0e-9b42-c07c2d483042",
+      "name": "Lee Kent",
+      "aliases": []
+    },
+    {
+      "id": "68e3bae9-0167-429e-ae1f-26fd40f1f609",
+      "name": "Lewis Denton",
+      "aliases": []
+    },
+    {
+      "id": "93e7f9d6-500b-4de2-9095-7e0ccbd9d6dc",
+      "name": "Luke Basevi",
+      "aliases": []
+    },
+    {
+      "id": "967ce171-572c-43e1-a4a5-37da28491656",
+      "name": "Luke Reddington",
+      "aliases": []
+    },
+    {
+      "id": "03923063-5834-4f56-aab5-c646a0e3c19b",
+      "name": "Maicon Nunes",
+      "aliases": []
+    },
+    {
+      "id": "0e6c4ad1-0bb1-4012-b7ab-4bfe2f1895e6",
+      "name": "Mat Baxter",
+      "aliases": []
+    },
+    {
+      "id": "249b547e-c470-429c-b48f-695390bfc482",
+      "name": "Nathan Herbertson",
+      "aliases": []
+    },
+    {
+      "id": "740fc496-504e-4077-9a7e-af8a718439c5",
+      "name": "Nick Bocks",
+      "aliases": []
+    },
+    {
+      "id": "b8473c7b-5fc5-4202-aad7-6e357431a175",
+      "name": "Oliver Tompkins",
+      "aliases": [
+        "Ollie"
+      ]
+    },
+    {
+      "id": "6c46b787-d139-434e-818b-a39b66407b90",
+      "name": "Ryan Cooper",
+      "aliases": []
+    },
+    {
+      "id": "a59c1466-62e9-4b45-a41e-6f879a6818d7",
+      "name": "Ryan Springell",
+      "aliases": []
+    },
+    {
+      "id": "1e0a5a16-8ed3-4286-84a7-e5123acc0b2d",
+      "name": "Simon Stears",
+      "aliases": []
+    },
+    {
+      "id": "7a2e3699-2967-405f-b43a-d0d1b4813461",
+      "name": "Steve B",
+      "aliases": []
+    }
+  ]
 }

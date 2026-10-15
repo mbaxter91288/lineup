@@ -1,0 +1,24 @@
+{
+  "id": "c236f84e-63b4-41cf-823b-bdde44dea683",
+  "name": "Harry Felmingham",
+  "aliases": [],
+  "position": "DEF",
+  "preferred_positions": [
+    "CB",
+    "CDM",
+    "CM"
+  ],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "ability": "saturday",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Great player. Quick feet and can keep the ball. Very strong and fast, and very competitive. Listed as DEF/MID - comfortable in either. Had a poor game on 27 August 2026 in a side that never got organised; rating held at 10 on one off night.",
+  "created_at": "2026-08-27",
+  "updated_at": "2026-09-01",
+  "workrate": "grafter",
+  "ability_value": 8.0,
+  "fitness_value": 7.0,
+  "workrate_value": 8.0
+}

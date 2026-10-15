@@ -1,0 +1,26 @@
+{
+  "id": "b8473c7b-5fc5-4202-aad7-6e357431a175",
+  "name": "Oliver Tompkins",
+  "aliases": [
+    "Ollie"
+  ],
+  "position": "GK",
+  "preferred_positions": [
+    "CB"
+  ],
+  "negative_positions": [
+    "ST"
+  ],
+  "ability": "sunday_league",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Luke Reddington's +1 and the group's only proper goalkeeper, so he stays in goal rather than rotating. One of the younger lads. Reassessed at 5 on 27 August 2026 \u2014 a useful keeper to have rather than a strong one.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-08-28",
+  "permanent_keeper": true,
+  "workrate": "grafter",
+  "ability_value": 5.0,
+  "fitness_value": 6.0,
+  "workrate_value": 7.0
+}

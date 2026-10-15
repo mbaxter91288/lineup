@@ -1,0 +1,24 @@
+{
+  "id": "381f9fe7-d17f-4cfc-987c-5a68e8debb78",
+  "name": "Callum Miller",
+  "aliases": [],
+  "position": "ATT",
+  "ability": "saturday",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Always up top. Strong, powerful and fast, but a heavy touch. Struggles more on the smaller 8v8 pitches than on the bigger 9v9 or 11v11 ones. Good footballing brain.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-08-27",
+  "preferred_positions": [
+    "ST",
+    "RW"
+  ],
+  "negative_positions": [
+    "CB"
+  ],
+  "workrate": "steady",
+  "ability_value": 6.5,
+  "fitness_value": 7.0,
+  "workrate_value": 6.0
+}

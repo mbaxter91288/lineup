@@ -1,0 +1,22 @@
+{
+  "id": "68e3bae9-0167-429e-ae1f-26fd40f1f609",
+  "name": "Lewis Denton",
+  "aliases": [],
+  "position": "DEF",
+  "ability": "sunday_league",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Half decent, but it varies which version turns up. His head can drop easily, which renders him ineffective for spells. Generally speaking decent, and not a bad footballing brain.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-08-20",
+  "preferred_positions": [
+    "RB",
+    "RW",
+    "LW"
+  ],
+  "workrate": "grafter",
+  "ability_value": 6.0,
+  "fitness_value": 6.0,
+  "workrate_value": 7.5
+}

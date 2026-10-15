@@ -1,0 +1,24 @@
+{
+  "id": "bc0cc4c7-3215-43c7-820b-7c6516fffbeb",
+  "name": "Alex S",
+  "aliases": [],
+  "position": "DEF",
+  "ability": "recreational",
+  "vet": "veteran",
+  "rating_override": null,
+  "fitness": "low",
+  "profile": "Not really a footballer, but enjoys playing. Usually does a stint in goal, so he is the default keeper option in a squad with no specialist GK.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-08-28",
+  "preferred_positions": [
+    "CB"
+  ],
+  "negative_positions": [
+    "ST",
+    "CAM"
+  ],
+  "workrate": "passenger",
+  "ability_value": 2.25,
+  "fitness_value": 2.75,
+  "workrate_value": 3.0
+}

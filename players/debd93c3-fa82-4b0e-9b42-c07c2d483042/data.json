@@ -1,0 +1,22 @@
+{
+  "id": "debd93c3-fa82-4b0e-9b42-c07c2d483042",
+  "name": "Lee Kent",
+  "aliases": [],
+  "position": "ATT",
+  "ability": "saturday",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Quick feet and a good footballer. Great feet and fast. Quiet on the pitch. Needs a good side around him \u2014 on 27 August 2026 his team lost shape and his head dropped with it, and he played well below an 8. Put him with an organiser and someone to combine with and he is worth every bit of his rating; leave him isolated in a struggling team and he fades out of the game.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-09-01",
+  "preferred_positions": [
+    "RW",
+    "LW",
+    "ST"
+  ],
+  "workrate": "steady",
+  "ability_value": 6.75,
+  "fitness_value": 7.75,
+  "workrate_value": 5.0
+}

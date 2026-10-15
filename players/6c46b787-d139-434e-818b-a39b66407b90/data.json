@@ -1,0 +1,23 @@
+{
+  "id": "6c46b787-d139-434e-818b-a39b66407b90",
+  "name": "Ryan Cooper",
+  "aliases": [],
+  "position": "ATT",
+  "ability": "sunday_league",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Target man. Performance varies a lot night to night and runs on confidence: praise raises it and raises his performance, criticism drops both sharply. Does well when he gets the ball, holds it and lays it off. Can score goals \u2014 curled one into the top corner from the byline on 27 August 2026, and played well above a 4 across that game. Moved to 4.5; Mat rates him a 5 or 6 on that showing, so he may well be worth another step.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-08-28",
+  "preferred_positions": [
+    "ST"
+  ],
+  "negative_positions": [
+    "CB"
+  ],
+  "workrate": "steady",
+  "ability_value": 5.5,
+  "fitness_value": 4.25,
+  "workrate_value": 4.0
+}

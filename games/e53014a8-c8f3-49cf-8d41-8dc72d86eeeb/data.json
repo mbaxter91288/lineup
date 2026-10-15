@@ -1,0 +1,89 @@
+{
+  "id": "e53014a8-c8f3-49cf-8d41-8dc72d86eeeb",
+  "date": "2026-08-27",
+  "format": "11v11",
+  "location": {
+    "name": "Vandyke School",
+    "town": "Leighton Buzzard",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=Vandyke+School+Leighton+Buzzard"
+  },
+  "teams": {
+    "bibs": [
+      "0e6c4ad1-0bb1-4012-b7ab-4bfe2f1895e6",
+      "740fc496-504e-4077-9a7e-af8a718439c5",
+      "1a48b106-6036-4007-b64b-f6da2101170e",
+      "9a8c1dd1-85aa-4fe6-a151-c477c0f0b6f3",
+      "7a2e3699-2967-405f-b43a-d0d1b4813461",
+      "debd93c3-fa82-4b0e-9b42-c07c2d483042",
+      "249b547e-c470-429c-b48f-695390bfc482",
+      "b8473c7b-5fc5-4202-aad7-6e357431a175",
+      "6c9c2a61-1396-4911-9845-e1d07503ef9a",
+      "bc3e9361-9a5a-4d97-89ca-bb391a0e2250",
+      "aec886f0-c81c-45d4-bc43-2ba64c6f5bdc"
+    ],
+    "non_bibs": [
+      "bc0cc4c7-3215-43c7-820b-7c6516fffbeb",
+      "381f9fe7-d17f-4cfc-987c-5a68e8debb78",
+      "b7a6e61f-95c3-46af-846f-7f9a761c4326",
+      "967ce171-572c-43e1-a4a5-37da28491656",
+      "3e75cc48-26e8-4114-8516-f09bbf324897",
+      "68e3bae9-0167-429e-ae1f-26fd40f1f609",
+      "6c46b787-d139-434e-818b-a39b66407b90",
+      "a60e54d7-d2bc-4b85-8257-55b7d4b4b45b",
+      "93e7f9d6-500b-4de2-9095-7e0ccbd9d6dc",
+      "1e0a5a16-8ed3-4286-84a7-e5123acc0b2d",
+      "22fe1c66-ade0-4d88-898f-eb7430a6c991"
+    ]
+  },
+  "score": {
+    "bibs": 2,
+    "non_bibs": 5
+  },
+  "notes": "Non-bibs were all over the bibs to begin with, but the goals were worldies that would not normally go in: two perfect lobs, Cooper curling one into the top corner from the byline, and Luke Basevi finishing a really good team move that tore the bibs apart. After that the game levelled out and the bibs had just as many chances without finishing them. Good game, decent standard for this group.\n\nWhat this means for future balance: the 5-2 flatters the non-bibs and is not evidence the split was wrong. Chances were even, the balance numbers were level at 75 v 74, and the margin came from finishing that will not repeat. No ratings were changed on the back of it. The one player worth watching is Ryan Cooper, rated 4 and explicitly streaky: the byline goal is logged in his profile, and a second good showing would justify moving him to 4.5. Hamza Hirsi's 9 stands; he is a regular here and this was only his first game in these records, not his first with the group.",
+  "lineup": {
+    "bibs": {
+      "shape": "4-5-1",
+      "roles": {
+        "0e6c4ad1-0bb1-4012-b7ab-4bfe2f1895e6": "CDM",
+        "740fc496-504e-4077-9a7e-af8a718439c5": "CM",
+        "debd93c3-fa82-4b0e-9b42-c07c2d483042": "ST"
+      }
+    },
+    "non_bibs": {
+      "roles": {
+        "b7a6e61f-95c3-46af-846f-7f9a761c4326": "CB",
+        "967ce171-572c-43e1-a4a5-37da28491656": "LB"
+      }
+    }
+  },
+  "goals": [
+    {
+      "player": "9a8c1dd1-85aa-4fe6-a151-c477c0f0b6f3",
+      "goals": 1
+    },
+    {
+      "player": "debd93c3-fa82-4b0e-9b42-c07c2d483042",
+      "goals": 1
+    },
+    {
+      "player": "68e3bae9-0167-429e-ae1f-26fd40f1f609",
+      "goals": 1
+    },
+    {
+      "player": "22fe1c66-ade0-4d88-898f-eb7430a6c991",
+      "goals": 1
+    },
+    {
+      "player": "6c46b787-d139-434e-818b-a39b66407b90",
+      "goals": 1
+    },
+    {
+      "player": "381f9fe7-d17f-4cfc-987c-5a68e8debb78",
+      "goals": 1
+    },
+    {
+      "player": "93e7f9d6-500b-4de2-9095-7e0ccbd9d6dc",
+      "goals": 1
+    }
+  ]
+}

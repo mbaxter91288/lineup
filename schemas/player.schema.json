@@ -2,38 +2,166 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Player",
   "type": "object",
-  "required": ["id", "name", "position", "rating", "fitness", "profile"],
+  "required": [
+    "id",
+    "name",
+    "position",
+    "ability",
+    "fitness",
+    "workrate",
+    "profile"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": { "type": "string", "description": "UUID v4. Matches the players/<uuid>/ folder name." },
-    "name": { "type": "string" },
+    "id": {
+      "type": "string",
+      "description": "UUID v4. Matches the players/<uuid>/ folder name."
+    },
+    "name": {
+      "type": "string"
+    },
     "aliases": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Other names this player is called by, used when resolving a name list."
     },
     "position": {
       "type": "string",
-      "enum": ["GK", "DEF", "MID", "ATT"],
+      "enum": [
+        "GK",
+        "DEF",
+        "MID",
+        "ATT"
+      ],
       "description": "Primary position. Secondary positions belong in profile."
     },
-    "rating": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 10,
-      "description": "Relative to this group only. 1 = weakest player in the group, 10 = strongest. Not an absolute skill level. Half points allowed."
-    },
     "fitness": {
-      "type": "number",
-      "minimum": 1,
-      "maximum": 10,
-      "description": "Relative stamina over a full game. Half points allowed."
+      "type": "string",
+      "enum": [
+        "low",
+        "moderate",
+        "good",
+        "engine"
+      ],
+      "description": "What the player has got in the tank over a full game. Banded like ability. Scored 3 / 5 / 7 / 9."
     },
     "profile": {
       "type": "string",
       "description": "Prose description: style of play, strengths, weaknesses, who they work well with."
     },
-    "created_at": { "type": "string", "format": "date" },
-    "updated_at": { "type": "string", "format": "date" }
+    "created_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "preferred_positions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "RB",
+          "CB",
+          "LB",
+          "CDM",
+          "CM",
+          "CAM",
+          "RM",
+          "LM",
+          "RW",
+          "LW",
+          "ST"
+        ]
+      },
+      "description": "Outfield roles this player is happy in, best first. Goalkeeper is not a role here: keeping is rotated unless the player is a permanent keeper."
+    },
+    "negative_positions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "RB",
+          "CB",
+          "LB",
+          "CDM",
+          "CM",
+          "CAM",
+          "RM",
+          "LM",
+          "RW",
+          "LW",
+          "ST"
+        ]
+      },
+      "description": "Roles to keep this player out of, whatever the shape needs."
+    },
+    "permanent_keeper": {
+      "type": "boolean",
+      "description": "True for a proper goalkeeper who stays in goal all game. Everyone else takes turns in goal, so nobody avoids it."
+    },
+    "captain": {
+      "type": "boolean",
+      "description": "True for an organiser: a talker who shapes the side and gets everyone else playing better. Worth 0.5 on his own rating, and when teams are being scored his whole side is credited a further 0.4 per team-mate, so it has to be lighter on paper for the game to come out even."
+    },
+    "ability": {
+      "type": "string",
+      "enum": [
+        "recreational",
+        "sunday_league",
+        "saturday",
+        "semi_pro"
+      ],
+      "description": "The standard the player's game is at, his reading of it included - what he can do and whether he knows where to be go hand in hand. Banded rather than scored, because it is far easier to say what level someone plays at than to pick a number out of ten. Not a claim about which league he really turns out in. Scored 3 / 5 / 7 / 9 by the balancer."
+    },
+    "vet": {
+      "type": "string",
+      "enum": [
+        "none",
+        "veteran",
+        "senior"
+      ],
+      "description": "Veteran level. Scales the whole rating rather than knocking a flat amount off it, so it costs a good player proportionally what it costs a poor one: none 1.0, veteran 0.92, senior 0.78."
+    },
+    "rating_override": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Set this only when ability, fitness, workrate and veteran level do not add up to how much you actually want the player in your team. When null the rating is derived as 0.58 x ability + 0.17 x fitness + 0.25 x workrate, plus 0.5 if he is a captain, all scaled by the veteran modifier. This is the number the balancer weights most heavily either way."
+    },
+    "workrate": {
+      "type": "string",
+      "enum": [
+        "passenger",
+        "steady",
+        "grafter",
+        "relentless"
+      ],
+      "description": "What he chooses to do with his fitness: tracking back, pressing, covering for others. Not the same as fitness - a very fit lad who stands up front waiting for the ball is high fitness and low workrate. Scored 3 / 5 / 7 / 9."
+    },
+    "ability_value": {
+      "type": "number",
+      "minimum": 2,
+      "maximum": 10,
+      "description": "Where inside his ability band the player sits. A band is a range, not a point: its named value is the middle and this may be up to 1.0 either side of it, so two players in the same band need not be the same player. Clamped to the band's range on read, and reset to the centre when the band changes. Absent means he sits at the centre."
+    },
+    "fitness_value": {
+      "type": "number",
+      "minimum": 2,
+      "maximum": 10,
+      "description": "Where inside his fitness band the player sits. A band is a range, not a point: its named value is the middle and this may be up to 1.0 either side of it, so two players in the same band need not be the same player. Clamped to the band's range on read, and reset to the centre when the band changes. Absent means he sits at the centre."
+    },
+    "workrate_value": {
+      "type": "number",
+      "minimum": 2,
+      "maximum": 10,
+      "description": "Where inside his workrate band the player sits. A band is a range, not a point: its named value is the middle and this may be up to 1.0 either side of it, so two players in the same band need not be the same player. Clamped to the band's range on read, and reset to the centre when the band changes. Absent means he sits at the centre."
+    }
   }
 }

@@ -1,0 +1,23 @@
+{
+  "id": "6c9c2a61-1396-4911-9845-e1d07503ef9a",
+  "name": "John Bassil",
+  "aliases": [],
+  "position": "DEF",
+  "ability": "recreational",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Tough to play with. Decent footballing brain and knows what he should be doing, but his brain does not talk to his feet. Slow to release the ball and does not run much. Always plays to the best of his ability. Had far and away his best night on 27 August 2026 \u2014 played at a 4 or 5 and got a couple of goals in an 8-3 win, with Simon Stears organising around him. Some of that is the company he was keeping: he plays a lot better in an organised side. Nudged to 2.5; move him again if he repeats it. Never on the same side as Alex McConnell: Mat's rule from 1 October 2026, the two of them together are too much for one side to carry. Pass --split \"John Bassil, Alex McConnell\" when balancing.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-10-01",
+  "preferred_positions": [
+    "CB"
+  ],
+  "negative_positions": [
+    "CAM",
+    "ST",
+    "RW",
+    "LW"
+  ],
+  "workrate": "passenger"
+}

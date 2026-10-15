@@ -1,0 +1,24 @@
+{
+  "id": "a60e54d7-d2bc-4b85-8257-55b7d4b4b45b",
+  "name": "Adam Slough",
+  "aliases": [],
+  "position": "DEF",
+  "ability": "saturday",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Also covers midfield. Solid player with a good footballing brain. Strong and tough to beat, difficult to get past. Much more defensive than attacking. Solid all round.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-08-20",
+  "preferred_positions": [
+    "CB",
+    "CDM"
+  ],
+  "negative_positions": [
+    "ST"
+  ],
+  "workrate": "grafter",
+  "ability_value": 8.0,
+  "fitness_value": 7.0,
+  "workrate_value": 7.0
+}

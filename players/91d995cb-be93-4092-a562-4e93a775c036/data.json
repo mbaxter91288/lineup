@@ -1,0 +1,18 @@
+{
+  "id": "91d995cb-be93-4092-a562-4e93a775c036",
+  "name": "Alex McConnell",
+  "aliases": [],
+  "position": "ATT",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "recreational",
+  "vet": "none",
+  "workrate": "passenger",
+  "rating_override": null,
+  "fitness": "low",
+  "profile": "Added 1 October 2026 with bands only; no notes yet on how he plays. Never on the same side as John Bassil: Mat's rule from 1 October 2026, the two of them together are too much for one side to carry. Pass --split \"Alex McConnell, John Bassil\" when balancing.",
+  "created_at": "2026-10-01",
+  "updated_at": "2026-10-01"
+}

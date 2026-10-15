@@ -1,0 +1,20 @@
+{
+  "id": "aec886f0-c81c-45d4-bc43-2ba64c6f5bdc",
+  "name": "Dan Bourn",
+  "aliases": [],
+  "position": "DEF",
+  "ability": "sunday_league",
+  "vet": "none",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Also covers midfield. Half decent player, mediocre footballing brain, usually does a job. Great shot on him when he gets the opportunity. Average.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-08-20",
+  "preferred_positions": [
+    "CB",
+    "CM",
+    "LM",
+    "RM"
+  ],
+  "workrate": "steady"
+}

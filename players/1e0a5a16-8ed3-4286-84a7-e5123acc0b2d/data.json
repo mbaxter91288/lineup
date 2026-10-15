@@ -1,0 +1,26 @@
+{
+  "id": "1e0a5a16-8ed3-4286-84a7-e5123acc0b2d",
+  "name": "Simon Stears",
+  "aliases": [],
+  "position": "MID",
+  "ability": "semi_pro",
+  "vet": "veteran",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "One of the best players in the group, a natural 9, now back up to speed after injury. Played at a high level, great footballing brain, does a lot of talking and organising. The single biggest lifter in this group: on 27 August 2026 he dictated and organised a non-bibs side that won 8-3, and players around him \u2014 John Bassil, Ryan Cooper \u2014 played well above their ratings all night. Treat having Simon on a side as worth more than his own rating suggests.",
+  "created_at": "2026-08-20",
+  "updated_at": "2026-09-01",
+  "preferred_positions": [
+    "CM",
+    "CAM"
+  ],
+  "negative_positions": [
+    "RW",
+    "LW"
+  ],
+  "captain": true,
+  "workrate": "grafter",
+  "ability_value": 9.0,
+  "fitness_value": 7.5,
+  "workrate_value": 7.5
+}

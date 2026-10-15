@@ -1,0 +1,25 @@
+{
+  "id": "4db4e4f8-e007-4444-bc85-41b0516d290f",
+  "name": "Anton Thompson",
+  "aliases": [],
+  "position": "ATT",
+  "preferred_positions": [
+    "ST"
+  ],
+  "negative_positions": [
+    "CB",
+    "CDM"
+  ],
+  "permanent_keeper": false,
+  "ability": "sunday_league",
+  "vet": "veteran",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Not great. Can score a goal every now and then, but useless with the ball at his feet. Strong and can hold it up, but always plays with his head down. Never pair with Mat Baxter - they don't get on.",
+  "created_at": "2026-08-27",
+  "updated_at": "2026-08-28",
+  "workrate": "steady",
+  "ability_value": 5.5,
+  "fitness_value": 5.0,
+  "workrate_value": 4.0
+}
