@@ -107,7 +107,7 @@ Squads up to 18 are enumerated exhaustively; above that it hill-climbs from rand
 
 ## Shapes and roles
 
-`bin/shape.py` turns each team into a formation and puts every player somewhere on the pitch: 4-4-2 for eleven a side, 3-3-2 for nine, 3-3-1 for eight. Players are assigned to roles by what they prefer, and a role in `negative_positions` is off limits. Because the group is defender-heavy, someone always has to play out of position; the cost of moving a player falls as their rating rises, so the better players are the ones who shift — they cope with it.
+`bin/shape.py` turns each team into a formation and puts every player somewhere on the pitch. **Below eleven a side, nobody is moved out of their general position**: the shape is whatever the outfield players' positions add up to (four defenders, three midfielders and an attacker play 4-3-1), and each player is only placed in a role from his own zone, chosen by what he prefers. At eleven a side the team fills a 4-4-2, and because the group is defender-heavy someone usually has to play out of position there; the cost of moving a player falls as their rating rises, so the better players are the ones who shift. Either way, a role in `negative_positions` is off limits.
 
 Whoever is in goal shows in the goalkeeper's spot. A permanent keeper is tagged `PERM`; anyone else there is just who the rotation starts with, and the untagged spot means the team rotates.
 
