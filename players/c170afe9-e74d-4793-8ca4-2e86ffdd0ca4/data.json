@@ -1,0 +1,18 @@
+{
+  "id": "c170afe9-e74d-4793-8ca4-2e86ffdd0ca4",
+  "name": "Arjun Das",
+  "aliases": [],
+  "position": "DEF",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "recreational",
+  "vet": "none",
+  "workrate": "steady",
+  "rating_override": null,
+  "fitness": "low",
+  "profile": "Low-skilled player who will do a job now and then. Usually spends a lot of time in goal, which can help a team.",
+  "created_at": "2026-10-15",
+  "updated_at": "2026-10-15"
+}
