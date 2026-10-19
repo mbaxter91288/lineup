@@ -4,7 +4,7 @@
   "aliases": [
     "Ollie"
   ],
-  "position": "GK",
+  "position": "DEF",
   "preferred_positions": [
     "CB"
   ],
@@ -15,10 +15,10 @@
   "vet": "none",
   "rating_override": null,
   "fitness": "moderate",
-  "profile": "Luke Reddington's +1 and the group's only proper goalkeeper, so he stays in goal rather than rotating. One of the younger lads. Reassessed at 5 on 27 August 2026 \u2014 a useful keeper to have rather than a strong one.",
+  "profile": "Luke Reddington's +1. A goalkeeper by trade but doesn't stay in goal \u2014 rotates like everyone else and plays outfield at the back. One of the younger lads. Reassessed at 5 on 27 August 2026 \u2014 useful rather than strong.",
   "created_at": "2026-08-20",
-  "updated_at": "2026-08-28",
-  "permanent_keeper": true,
+  "updated_at": "2026-10-19",
+  "permanent_keeper": false,
   "workrate": "grafter",
   "ability_value": 5.0,
   "fitness_value": 6.0,
