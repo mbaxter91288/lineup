@@ -1,0 +1,20 @@
+{
+  "id": "9190e5bb-ae97-4a90-81ff-1cdbceb04901",
+  "name": "Hamed Noor",
+  "aliases": [],
+  "position": "DEF",
+  "preferred_positions": [
+    "CB"
+  ],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "recreational",
+  "vet": "senior",
+  "workrate": "steady",
+  "rating_override": null,
+  "fitness": "low",
+  "profile": "Normally hangs at the back but gets forward at random and lacks the fitness to get back. Not lazy, just not fit. Not great technically.",
+  "created_at": "2026-10-19",
+  "updated_at": "2026-10-19"
+}

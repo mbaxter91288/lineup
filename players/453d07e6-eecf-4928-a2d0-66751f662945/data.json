@@ -1,0 +1,20 @@
+{
+  "id": "453d07e6-eecf-4928-a2d0-66751f662945",
+  "name": "Tom Dawson",
+  "aliases": [],
+  "position": "ATT",
+  "preferred_positions": [
+    "ST"
+  ],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "sunday_league",
+  "vet": "none",
+  "workrate": "grafter",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Does well up top on 11-a-side but can struggle in 8s and 9s. Can play football, not useless, not amazing.",
+  "created_at": "2026-10-19",
+  "updated_at": "2026-10-19"
+}
