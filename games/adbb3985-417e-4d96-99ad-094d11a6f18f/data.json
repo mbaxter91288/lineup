@@ -1,0 +1,37 @@
+{
+  "id": "adbb3985-417e-4d96-99ad-094d11a6f18f",
+  "date": "2026-10-19",
+  "format": "8v8",
+  "location": {
+    "name": "Vandyke School",
+    "town": "Leighton Buzzard",
+    "maps_url": "https://www.google.com/maps/search/?api=1&query=Vandyke+School+Leighton+Buzzard"
+  },
+  "teams": {
+    "bibs": [
+      "acac3b6a-03ba-4749-9a52-7b849f1d7675",
+      "6c9c2a61-1396-4911-9845-e1d07503ef9a",
+      "6c46b787-d139-434e-818b-a39b66407b90",
+      "68e3bae9-0167-429e-ae1f-26fd40f1f609",
+      "9190e5bb-ae97-4a90-81ff-1cdbceb04901",
+      "381f9fe7-d17f-4cfc-987c-5a68e8debb78",
+      "967ce171-572c-43e1-a4a5-37da28491656",
+      "0e6c4ad1-0bb1-4012-b7ab-4bfe2f1895e6"
+    ],
+    "non_bibs": [
+      "453d07e6-eecf-4928-a2d0-66751f662945",
+      "91d995cb-be93-4092-a562-4e93a775c036",
+      "bf8b66bd-8a8f-42de-96e1-cfdfa1de8233",
+      "b8473c7b-5fc5-4202-aad7-6e357431a175",
+      "c236f84e-63b4-41cf-823b-bdde44dea683",
+      "03923063-5834-4f56-aab5-c646a0e3c19b",
+      "a59c1466-62e9-4b45-a41e-6f879a6818d7",
+      "3e75cc48-26e8-4114-8516-f09bbf324897"
+    ]
+  },
+  "score": {
+    "bibs": null,
+    "non_bibs": null
+  },
+  "notes": ""
+}
