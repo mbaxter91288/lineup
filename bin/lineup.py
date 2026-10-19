@@ -96,10 +96,10 @@ VET_LABELS = {"none": "", "veteran": "Vet", "senior": "Senior vet"}
 
 # What a rating is made of. Ability carries it; legs and effort move it around.
 # Named apart from the W_* cost weights below, which are a different currency.
-# 0.7 / 0.2 / 0.3 in feel, normalised so they sum to 1.0 and nothing clamps at 10.
-MIX_ABILITY = 0.58
-MIX_FITNESS = 0.17
-MIX_WORKRATE = 0.25
+# Ability is most of it; the weights sum to 1.0 so nothing clamps at 10.
+MIX_ABILITY = 0.70
+MIX_FITNESS = 0.12
+MIX_WORKRATE = 0.18
 
 # A band is a range, not a point. Its named value is the middle of it, and a
 # player can be nudged either way inside the band without leaving it: two
@@ -351,8 +351,8 @@ def guest_player(name: str, squad: list[dict]) -> dict:
     return guest
 
 
-def plays_midfield(player: dict) -> bool:
-    return player["position"] == "MID" or any(
+def plays_midfield(player: dict, *, preferences: bool = True) -> bool:
+    return player["position"] == "MID" or preferences and any(
         role in MIDFIELD_ROLES for role in player.get("preferred_positions", []))
 
 
@@ -363,6 +363,8 @@ def team_stats(team: list[dict]) -> dict:
     # An organiser gets everyone around him playing better, so his side is worth
     # more than the sum of its ratings and has to be lighter on paper to be even.
     lift = CAPTAIN_TEAM * (len(team) - 1) if any(p.get("captain") for p in team) else 0.0
+    # Preferred roles only count at eleven a side; below that, a player is his position.
+    full = len(team) >= shape.FULL_SIDE
     return {
         "rating": rating,
         "effective": rating + lift,
@@ -373,10 +375,10 @@ def team_stats(team: list[dict]) -> dict:
         "top3": sum(ratings[:3]),
         "shape": {pos: sum(1 for p in team if p["position"] == pos) for pos in POSITIONS},
         "keepers": len(keepers),
-        "midfield_ability": sum(ability_of(p) for p in team if plays_midfield(p)),
+        "midfield_ability": sum(ability_of(p) for p in team if plays_midfield(p, preferences=full)),
         "captains": sum(1 for p in team if p.get("captain")),
         "stars": {
-            zone: any(rating_of(p) >= STAR_RATING and shape.covers(p, zone) for p in team)
+            zone: any(rating_of(p) >= STAR_RATING and shape.covers(p, zone, preferences=full) for p in team)
             for zone in ("DEF", "MID", "ATT")
         },
     }

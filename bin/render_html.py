@@ -567,8 +567,9 @@ TEMPLATE = """<title>__TITLE__</title>
           marker.textContent = player.own_goals > 1 ? "OG \u00d7" + player.own_goals : "OG";
           row.querySelector(".player").appendChild(marker);
         }
+        // The list gives each player's own position; the pitch shows where he stands.
         row.querySelector(".pos").textContent =
-          player.permanent_keeper ? "GK perm" : player.role;
+          player.permanent_keeper ? "GK perm" : player.position;
         if (!isPlayerPage) {
           row.querySelector(".rating").textContent = fmt(player.rating);
           ["ability", "fitness", "workrate"].forEach(function (band) {
