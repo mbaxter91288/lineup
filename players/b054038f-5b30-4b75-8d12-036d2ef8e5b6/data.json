@@ -1,0 +1,21 @@
+{
+  "id": "b054038f-5b30-4b75-8d12-036d2ef8e5b6",
+  "name": "Simon Barby",
+  "aliases": [],
+  "position": "ATT",
+  "preferred_positions": [
+    "ST"
+  ],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "saturday",
+  "vet": "veteran",
+  "workrate": "grafter",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Quality player, the best of the new attackers. Comfortable on the ball and a great finisher.",
+  "created_at": "2026-10-22",
+  "updated_at": "2026-10-22",
+  "ability_value": 8.0
+}

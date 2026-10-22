@@ -1,0 +1,22 @@
+{
+  "id": "99be540c-6724-44a8-a9ba-1bedf3a41d3a",
+  "name": "Ioan Nemes",
+  "aliases": [],
+  "position": "ATT",
+  "preferred_positions": [
+    "RW",
+    "LW",
+    "CM"
+  ],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "saturday",
+  "vet": "none",
+  "workrate": "grafter",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Fast with really quick feet. Runs at players. Will play midfield as well.",
+  "created_at": "2026-10-22",
+  "updated_at": "2026-10-22"
+}

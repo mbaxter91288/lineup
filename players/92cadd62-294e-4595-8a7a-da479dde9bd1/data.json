@@ -1,0 +1,18 @@
+{
+  "id": "92cadd62-294e-4595-8a7a-da479dde9bd1",
+  "name": "Rhys Christie",
+  "aliases": [],
+  "position": "ATT",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "sunday_league",
+  "vet": "veteran",
+  "workrate": "grafter",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Decent player with a great work rate.",
+  "created_at": "2026-10-22",
+  "updated_at": "2026-10-22"
+}
