@@ -858,6 +858,20 @@ def cmd_balance(args) -> int:
             return 1
         groups.append({p["id"] for p in members})
 
+    if args.bibs is not None:
+        if not args.commit:
+            print("--bibs only works with --commit.", file=sys.stderr)
+            return 1
+        chosen_bibs, missing = resolve(parse_names(args.bibs), {p["id"]: p for p in squad})
+        if missing:
+            print("Not in tonight's squad: " + ", ".join(missing), file=sys.stderr)
+            return 1
+        bib_ids = {p["id"] for p in chosen_bibs}
+        splits = [(0.0, [p for p in squad if p["id"] in bib_ids],
+                   [p for p in squad if p["id"] not in bib_ids])]
+        print_split(1, splits[0])
+        return _commit(splits[0], guests, args, "hand-picked teams")
+
     splits = balance(squad, options=args.options, seed=args.seed, groups=groups)
     if not splits:
         print("No split keeps every --split group divided evenly.", file=sys.stderr)
@@ -875,31 +889,39 @@ def cmd_balance(args) -> int:
         if not 0 <= chosen < len(splits):
             print(f"There is no option {args.pick}.", file=sys.stderr)
             return 1
-        _, bibs, non_bibs = splits[chosen]
-        game = {
-            "id": str(uuid.uuid4()),
-            "date": date,
-            "format": f"{len(bibs)}v{len(non_bibs)}",
-            "location": location,
-            "teams": {
-                "bibs": [p["id"] for p in bibs],
-                "non_bibs": [p["id"] for p in non_bibs],
-            },
-            "score": {"bibs": None, "non_bibs": None},
-            "notes": "",
-        }
-        if guests:
-            game["guests"] = guests
-        print(f"\nSaved option {chosen + 1} -> {save_game(game)}")
-        admin_path, player_path = write_game_pages(game)
-        print(f"Admin page  -> {admin_path}")
-        print(f"Player page -> {player_path}")
-        print(f"Record the result later with: ./bin/lineup.py score {game['id']} --bibs N --non-bibs N")
+        return _commit(splits[chosen], guests, args, f"option {chosen + 1}")
     elif args.html is not None:
         path = Path(args.html) if args.html else None
         written = write_options_page(splits, squad, date=date, location=location,
                                      recommended=pick, path=path)
         print(f"\nPage -> {written}")
+    return 0
+
+
+def _commit(split: tuple, guests: list[dict], args, label: str) -> int:
+    """Save one split as the game and write both of its pages."""
+    _, bibs, non_bibs = split
+    date = args.date or today()
+    location = location_from(args.location)
+    game = {
+        "id": str(uuid.uuid4()),
+        "date": date,
+        "format": f"{len(bibs)}v{len(non_bibs)}",
+        "location": location,
+        "teams": {
+            "bibs": [p["id"] for p in bibs],
+            "non_bibs": [p["id"] for p in non_bibs],
+        },
+        "score": {"bibs": None, "non_bibs": None},
+        "notes": "",
+    }
+    if guests:
+        game["guests"] = guests
+    print(f"\nSaved {label} -> {save_game(game)}")
+    admin_path, player_path = write_game_pages(game)
+    print(f"Admin page  -> {admin_path}")
+    print(f"Player page -> {player_path}")
+    print(f"Record the result later with: ./bin/lineup.py score {game['id']} --bibs N --non-bibs N")
     return 0
 
 
@@ -1086,6 +1108,9 @@ def main() -> int:
                        help="save an option as a game, and write its page")
     p_bal.add_argument("--pick", type=int, metavar="N",
                        help="which option to commit, 1-based (default: the recommended one)")
+    p_bal.add_argument("--bibs", metavar="NAMES",
+                       help="with --commit, save these players as bibs and everyone else as "
+                            "non-bibs, skipping the balancer: for teams picked by hand")
     p_bal.add_argument("--date", help="game date, YYYY-MM-DD (default today)")
     p_bal.add_argument("--location", help='venue, e.g. "Vandyke School, Leighton Buzzard" '
                                           "(default comes from config.json)")

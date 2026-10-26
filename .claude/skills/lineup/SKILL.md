@@ -67,7 +67,12 @@ When the user gives a list of names:
    ```
    ./bin/lineup.py balance --names "<the full list>" --html --seed 7 --commit --pick 5
    ```
-   **Always pass the same `--seed` you generated the options with.** `--commit` re-runs the balancer, and without a fixed seed the tie-break ordering shifts between runs, so `--pick 5` commits a different split from the option 5 the user was looking at. Generate with `--seed`, commit with the same `--seed`, and check the saved teams afterwards. Leave `--pick` off to commit the recommended option. This writes **both** pages — republish each of them, the player one with the 🥅 favicon, and hand the user both links, saying which is which.
+   **Always pass the same `--seed` you generated the options with.** `--commit` re-runs the balancer, and without a fixed seed the tie-break ordering shifts between runs, so `--pick 5` commits a different split from the option 5 the user was looking at. Generate with `--seed`, commit with the same `--seed`, and check the saved teams afterwards. Leave `--pick` off to commit the recommended option.
+
+   **Teams picked by hand** skip the balancer: pass the bibs with `--bibs` on the commit and everyone else in `--names` goes to non-bibs.
+   ```
+   ./bin/lineup.py balance --names "<the full list>" --commit --bibs "<the bibs>"
+   ``` This writes **both** pages — republish each of them, the player one with the 🥅 favicon, and hand the user both links, saying which is which.
 
 ## Recording results
 
