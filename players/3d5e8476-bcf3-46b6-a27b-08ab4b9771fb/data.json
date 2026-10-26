@@ -1,0 +1,18 @@
+{
+  "id": "3d5e8476-bcf3-46b6-a27b-08ab4b9771fb",
+  "name": "Dan Hall",
+  "aliases": [],
+  "position": "MID",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "saturday",
+  "vet": "veteran",
+  "workrate": "steady",
+  "rating_override": null,
+  "fitness": "low",
+  "profile": "Veteran midfielder with Saturday-level quality on the ball; limited legs over a full game.",
+  "created_at": "2026-10-26",
+  "updated_at": "2026-10-26"
+}
