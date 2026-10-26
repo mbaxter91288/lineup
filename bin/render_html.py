@@ -328,6 +328,12 @@ TEMPLATE = """<title>__TITLE__</title>
   .pitch-legend .bibs { color: var(--bibs); }
   .pitch-legend .non-bibs { color: var(--nonbibs); }
 
+  /* --- ranked --- */
+  .ranked { display: flex; flex-direction: column; gap: 12px; max-width: 760px; width: 100%; margin: 0 auto; }
+  .bracket { padding: 20px 22px 12px; min-width: 0; }
+  .bracket th:nth-child(2), .bracket td.player { text-align: left; }
+  .bracket .rank { color: var(--muted); font-weight: 600; font-size: 13px; width: 1%; }
+
   [hidden] { display: none !important; }
 
   @media (max-width: 700px) {
@@ -408,6 +414,11 @@ TEMPLATE = """<title>__TITLE__</title>
           <circle cx="8" cy="8" r="1.9" stroke="currentColor" stroke-width="1.4"/>
         </svg>
       </button>
+      <button class="icon-btn tip" id="view-ranked" type="button" data-tip="Ranked by ability" aria-label="Ranked view" aria-pressed="false">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 4h10M3 8h7M3 12h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+      </button>
     </div>
     <button class="icon-btn solo tip" id="copy" type="button" data-tip="Copy teams" aria-label="Copy teams">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
@@ -445,6 +456,8 @@ TEMPLATE = """<title>__TITLE__</title>
       </div>
     </section>
   </div>
+
+  <div class="ranked" id="ranked-view" hidden></div>
 
   <div id="pitch-view" hidden>
     <div class="card pitch-card">
@@ -730,17 +743,67 @@ TEMPLATE = """<title>__TITLE__</title>
         .join("-");
     }
 
-    function setView(view) {
-      const isTable = view === "table";
-      document.getElementById("table-view").hidden = !isTable;
-      document.getElementById("pitch-view").hidden = isTable;
-      document.getElementById("view-table").setAttribute("aria-pressed", isTable ? "true" : "false");
-      document.getElementById("view-pitch").setAttribute("aria-pressed", isTable ? "false" : "true");
-      if (!isTable) { layoutPitch(options[current]); }
+    // The whole squad bracketed by ability, best first, with no teams in it:
+    // a straight ranking for picking sides by hand. Admin page only.
+    function fillRanked() {
+      const everyone = options[0].bibs.players.concat(options[0].non_bibs.players);
+      const view = document.getElementById("ranked-view");
+      view.innerHTML = "";
+      let rank = 0;
+      ["Semi-pro", "Saturday", "Sunday", "Rec"].forEach(function (band) {
+        const players = everyone
+          .filter(function (p) { return p.ability === band; })
+          .sort(function (a, b) { return b.rating - a.rating || a.name.localeCompare(b.name); });
+        if (!players.length) { return; }
+        const card = document.createElement("section");
+        card.className = "card bracket";
+        card.innerHTML =
+          '<div class="team-head"><span class="team-name"></span><span class="team-shape"></span></div>' +
+          '<div class="scroll"><table><thead><tr><th>#</th><th>Player</th><th>Pos</th><th>Rating</th>' +
+          '<th>Fitness</th><th>Workrate</th><th>Vet</th></tr></thead><tbody></tbody></table></div>';
+        card.querySelector(".team-name").textContent = band;
+        card.querySelector(".team-shape").textContent =
+          players.length + (players.length === 1 ? " player" : " players");
+        const body = card.querySelector("tbody");
+        players.forEach(function (player) {
+          rank += 1;
+          const row = document.createElement("tr");
+          row.innerHTML = '<td class="rank"></td><td class="player"></td><td><span class="pos"></span></td>' +
+            '<td class="rating"></td><td class="fitness"></td><td class="workrate"></td><td class="vet"></td>';
+          row.querySelector(".rank").textContent = rank;
+          row.querySelector(".player").textContent = player.name;
+          row.querySelector(".pos").textContent = player.permanent_keeper ? "GK perm" : player.position;
+          row.querySelector(".rating").textContent = fmt(player.rating);
+          row.querySelector(".fitness").textContent = player.fitness;
+          row.querySelector(".workrate").textContent = player.workrate;
+          row.querySelector(".vet").textContent = player.vet;
+          body.appendChild(row);
+        });
+        view.appendChild(card);
+      });
     }
+
+    function setView(view) {
+      document.getElementById("table-view").hidden = view !== "table";
+      document.getElementById("pitch-view").hidden = view !== "pitch";
+      document.getElementById("ranked-view").hidden = view !== "ranked";
+      ["table", "pitch", "ranked"].forEach(function (name) {
+        document.getElementById("view-" + name).setAttribute("aria-pressed", view === name ? "true" : "false");
+      });
+      // the ranking ignores the splits, so the option picker and stats go with it
+      document.getElementById("option-controls").hidden = options.length < 2 || view === "ranked";
+      document.getElementById("stats").hidden = isPlayerPage || view === "ranked";
+      if (view === "pitch") { layoutPitch(options[current]); }
+      if (view === "ranked") { fillRanked(); }
+    }
+
+    if (isPlayerPage) { document.getElementById("view-ranked").remove(); }
 
     document.getElementById("view-table").addEventListener("click", function () { setView("table"); });
     document.getElementById("view-pitch").addEventListener("click", function () { setView("pitch"); });
+    if (!isPlayerPage) {
+      document.getElementById("view-ranked").addEventListener("click", function () { setView("ranked"); });
+    }
     document.getElementById("prev").addEventListener("click", function () { show(current - 1); });
     document.getElementById("next").addEventListener("click", function () { show(current + 1); });
 

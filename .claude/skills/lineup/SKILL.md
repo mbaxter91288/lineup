@@ -128,7 +128,7 @@ Each game has two pages, both rewritten whenever the game moves on:
 - `artifacts/teams-<date>.html` — **admin.** Everything: candidate splits while teams are being chosen, then the confirmed teams with ratings, fitness and balance stats. This one stays private.
 - `artifacts/match-<date>.html` — **player.** Written from the moment the teams are confirmed. Teams, positions, score and scorers, and no ratings anywhere in the file, not even in its data — this is the link the user shares with the lads, so nothing in it can embarrass anyone. Players appear on the pitch as initials rather than ratings.
 
-Both have a table view and a pitch view; on the pitch, players animate to their new spots when the option changes, and a team with no goalkeeper puts its lowest-rated defender in goal — a visual choice only, which never changes anyone's stored position.
+Both have a table view and a pitch view, and the admin page adds a ranked view: today's squad bracketed by ability band (semi-pro down to rec), best rating first within each, numbered 1 to N, with no teams on it — for picking sides by hand. The player page never gets it. On the pitch, players animate to their new spots when the option changes, and a team with no goalkeeper puts its lowest-rated defender in goal — a visual choice only, which never changes anyone's stored position.
 
 Never put a rating, a fitness score or a balance number on the player page, and never point the user at the admin link when they ask for something to share.
 
