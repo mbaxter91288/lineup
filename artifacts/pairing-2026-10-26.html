@@ -1,0 +1,384 @@
+<title>Pairing Board 26 Oct</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@500;600;700&display=swap">
+<style>
+  /* Layout: two kit-coloured columns facing each other, one band per ability
+     bracket, a narrow gutter between them that reads the gap on each row. */
+  :root {
+    --ground: #eef0ea;
+    --surface: #ffffff;
+    --sunk: #e3e6dd;
+    --line: #d9ddd2;
+    --ink: #16180f;
+    --muted: #6d7266;
+    --bibs: #cf5a2c;
+    --bibs-tint: #fbece4;
+    --nonbibs: #34557d;
+    --nonbibs-tint: #e7edf5;
+    --even: #3e7a4a;
+    --shadow: 0 1px 2px rgba(22, 24, 15, .06), 0 8px 20px -14px rgba(22, 24, 15, .45);
+    --lift: 0 18px 40px -12px rgba(22, 24, 15, .45);
+    --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+    --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --card-h: 58px;
+    --gap: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #111310; --surface: #1b1d19; --sunk: #252822; --line: #30342c;
+      --ink: #eef0e8; --muted: #9a9f92;
+      --bibs: #f0834f; --bibs-tint: #3a2419; --nonbibs: #86aad9; --nonbibs-tint: #1c2735;
+      --even: #7fc28c;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 20px -14px rgba(0, 0, 0, .9);
+      --lift: 0 18px 40px -12px rgba(0, 0, 0, .9);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #111310; --surface: #1b1d19; --sunk: #252822; --line: #30342c;
+    --ink: #eef0e8; --muted: #9a9f92;
+    --bibs: #f0834f; --bibs-tint: #3a2419; --nonbibs: #86aad9; --nonbibs-tint: #1c2735;
+    --even: #7fc28c;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 20px -14px rgba(0, 0, 0, .9);
+    --lift: 0 18px 40px -12px rgba(0, 0, 0, .9);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: var(--body); font-size: 14px; line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 860px; margin: 0 auto;
+    padding-block: 24px 60px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex; flex-direction: column; gap: 18px;
+  }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-family: var(--display); font-size: 34px; font-weight: 800; letter-spacing: .01em; text-transform: uppercase; margin: 2px 0 0; line-height: 1; text-wrap: balance; }
+  .actions { display: flex; gap: 6px; }
+  button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+  button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .btn { padding: 8px 14px; border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); font-size: 13px; font-weight: 700; color: var(--muted); }
+  .btn:hover { color: var(--ink); }
+
+  /* scoreboard */
+  .board { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
+           background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 18px; }
+  .side-total { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .side-total.right { text-align: right; align-items: flex-end; }
+  .side-name { font-family: var(--display); font-size: 18px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .bibs-c { color: var(--bibs); }
+  .nonbibs-c { color: var(--nonbibs); }
+  .figure { font-family: var(--display); font-size: 36px; font-weight: 700; line-height: 1; }
+  .sub { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .gap-pill { font-family: var(--display); font-size: 15px; font-weight: 700; letter-spacing: .04em; padding: 6px 12px; border-radius: 999px; background: var(--sunk); color: var(--muted); white-space: nowrap; text-align: center; }
+  .gap-pill.even { color: var(--even); }
+
+  /* brackets */
+  .bracket { display: flex; flex-direction: column; gap: 8px; }
+  .bracket-head { display: flex; align-items: baseline; gap: 10px; border-bottom: 1.5px solid var(--line); padding-bottom: 6px; }
+  .bracket-name { font-family: var(--display); font-size: 20px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .bracket-sum { font-size: 12px; color: var(--muted); font-weight: 600; margin-left: auto; }
+  .bracket-sum b { font-weight: 700; }
+  .rows { display: grid; grid-template-columns: minmax(0, 1fr) 46px minmax(0, 1fr); gap: 0 8px; }
+  .list, .gutter { display: flex; flex-direction: column; gap: var(--gap); min-height: var(--card-h); border-radius: 10px; }
+  .list { transition: background-color .15s ease, opacity .15s ease; }
+  .dragging .list { opacity: .45; }
+  .dragging .list.open { opacity: 1; background: var(--sunk); outline: 1.5px dashed var(--line); outline-offset: 3px; }
+
+  .card {
+    height: var(--card-h); display: grid;
+    grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center;
+    background: var(--surface); border-radius: 9px; box-shadow: var(--shadow);
+    padding-right: 10px; user-select: none; -webkit-user-select: none;
+    border-left: 4px solid transparent;
+  }
+  .list.bibs .card { border-left-color: var(--bibs); }
+  .list.non_bibs .card { border-left-color: var(--nonbibs); }
+  .grip { height: 100%; display: grid; place-items: center; color: var(--muted); cursor: grab; touch-action: none; }
+  .card .who { min-width: 0; display: flex; flex-direction: column; }
+  .name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meta { font-size: 11px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pos { font-weight: 800; letter-spacing: .04em; }
+  .rating { font-family: var(--display); font-size: 22px; font-weight: 700; padding-left: 8px; }
+  @media (hover: hover) { .card { cursor: grab; } }
+  .card.ghost { position: fixed; z-index: 50; box-shadow: var(--lift); pointer-events: none; transform: rotate(-1.2deg); cursor: grabbing; }
+  .placeholder { height: var(--card-h); border-radius: 9px; border: 2px dashed var(--muted); opacity: .5; flex: none; }
+  .empty { height: var(--card-h); border-radius: 9px; border: 1.5px dashed var(--line); display: grid; place-items: center; font-size: 11px; font-weight: 600; color: var(--muted); }
+
+  .delta { height: var(--card-h); display: grid; place-items: center; font-family: var(--display); font-size: 15px; font-weight: 700; color: var(--muted); }
+  .delta.l { color: var(--bibs); }
+  .delta.r { color: var(--nonbibs); }
+  .delta.e { color: var(--even); }
+
+  .hint { font-size: 12px; color: var(--muted); text-align: center; }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 28px; }
+    .figure { font-size: 30px; }
+    .rows { grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr); gap: 0 5px; }
+    .card { grid-template-columns: 22px minmax(0, 1fr) auto; padding-right: 7px; border-left-width: 3px; }
+    .name { font-size: 13px; white-space: normal; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .meta .more { display: none; }
+    .rating { font-size: 19px; padding-left: 4px; }
+    .delta { font-size: 13px; }
+    .board { padding: 12px 14px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .card.ghost { transform: none; } }
+</style>
+
+<div class="page">
+  <header>
+    <div>
+      <div class="kicker">Monday 26 October · 8v8 at Vandyke School</div>
+      <h1>Pairing Board</h1>
+    </div>
+    <div class="actions">
+      <button class="btn" id="copy" type="button">Copy teams</button>
+      <button class="btn" id="reset" type="button">Reset</button>
+    </div>
+  </header>
+
+  <section class="board" aria-live="polite">
+    <div class="side-total">
+      <span class="side-name bibs-c">Bibs</span>
+      <span class="figure" id="bibs-total"></span>
+      <span class="sub" id="bibs-sub"></span>
+    </div>
+    <span class="gap-pill" id="gap"></span>
+    <div class="side-total right">
+      <span class="side-name nonbibs-c">Non-bibs</span>
+      <span class="figure" id="non_bibs-total"></span>
+      <span class="sub" id="non_bibs-sub"></span>
+    </div>
+  </section>
+
+  <div id="brackets"></div>
+
+  <p class="hint">Drag a player by the grip to reorder within his bracket, or across to the other team. The middle column shows who is stronger on each row.</p>
+</div>
+
+<script id="data" type="application/json">
+{"bibs": [{"name": "Maicon Nunes", "position": "DEF", "rating": 3.1, "ability": "Rec", "fitness": "Low", "workrate": "Steady", "vet": "Vet"}, {"name": "Luke Reddington", "position": "DEF", "rating": 5.0, "ability": "Sunday", "fitness": "Moderate", "workrate": "Steady", "vet": ""}, {"name": "Lewis Denton", "position": "DEF", "rating": 6.3, "ability": "Sunday", "fitness": "Moderate", "workrate": "Grafter", "vet": ""}, {"name": "Stuart Dickinson", "position": "DEF", "rating": 5.0, "ability": "Sunday", "fitness": "Moderate", "workrate": "Steady", "vet": ""}, {"name": "Chris Vernon", "position": "MID", "rating": 6.4, "ability": "Saturday", "fitness": "Good", "workrate": "Grafter", "vet": "Vet"}, {"name": "Mat Baxter", "position": "MID", "rating": 7.7, "ability": "Saturday", "fitness": "Engine", "workrate": "Grafter", "vet": ""}, {"name": "Lee Kent", "position": "ATT", "rating": 6.6, "ability": "Saturday", "fitness": "Good", "workrate": "Steady", "vet": ""}, {"name": "Callum Miller", "position": "ATT", "rating": 6.5, "ability": "Saturday", "fitness": "Good", "workrate": "Steady", "vet": ""}], "non_bibs": [{"name": "Anton Thompson", "position": "ATT", "rating": 4.8, "ability": "Sunday", "fitness": "Moderate", "workrate": "Steady", "vet": "Vet"}, {"name": "Rick Grimshaw", "position": "DEF", "rating": 5.0, "ability": "Sunday", "fitness": "Moderate", "workrate": "Steady", "vet": ""}, {"name": "Ryan Springell", "position": "DEF", "rating": 5.3, "ability": "Rec", "fitness": "Engine", "workrate": "Relentless", "vet": ""}, {"name": "Harry Felmingham", "position": "DEF", "rating": 7.9, "ability": "Saturday", "fitness": "Good", "workrate": "Grafter", "vet": ""}, {"name": "Dan Hall", "position": "MID", "rating": 5.7, "ability": "Saturday", "fitness": "Low", "workrate": "Steady", "vet": "Vet"}, {"name": "Cristian Paslaru", "position": "MID", "rating": 5.9, "ability": "Sunday", "fitness": "Good", "workrate": "Grafter", "vet": ""}, {"name": "Charlie Hall", "position": "MID", "rating": 6.9, "ability": "Saturday", "fitness": "Engine", "workrate": "Steady", "vet": ""}, {"name": "Ryan Cooper", "position": "ATT", "rating": 5.1, "ability": "Sunday", "fitness": "Moderate", "workrate": "Steady", "vet": ""}]}
+</script>
+<script>
+(function () {
+  const seed = JSON.parse(document.getElementById("data").textContent);
+  const BRACKETS = ["Semi-pro", "Saturday", "Sunday", "Rec"];
+  const TEAMS = ["bibs", "non_bibs"];
+  const KEY = "pairing-2026-10-26";
+  const people = {};
+  TEAMS.forEach(function (t) { seed[t].forEach(function (p) { people[p.name] = p; }); });
+
+  // state[team][bracket] = names in display order
+  function fresh() {
+    const s = {};
+    TEAMS.forEach(function (t) {
+      s[t] = {};
+      BRACKETS.forEach(function (b) {
+        s[t][b] = seed[t].filter(function (p) { return p.ability === b; })
+          .sort(function (x, y) { return y.rating - x.rating; })
+          .map(function (p) { return p.name; });
+      });
+    });
+    return s;
+  }
+  function valid(s) {
+    try {
+      const seen = [];
+      TEAMS.forEach(function (t) { BRACKETS.forEach(function (b) {
+        s[t][b].forEach(function (n) { if (!people[n] || people[n].ability !== b) { throw 0; } seen.push(n); });
+      }); });
+      return seen.length === Object.keys(people).length && new Set(seen).size === seen.length;
+    } catch (e) { return false; }
+  }
+  let state = fresh();
+  try { const saved = JSON.parse(localStorage.getItem(KEY)); if (saved && valid(saved)) { state = saved; } } catch (e) {}
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+
+  const fmt = function (v) { return v.toFixed(1); };
+  const teamNames = function (t) { return BRACKETS.reduce(function (a, b) { return a.concat(state[t][b]); }, []); };
+  const sum = function (names) { return names.reduce(function (a, n) { return a + people[n].rating; }, 0); };
+
+  const grip = '<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg>';
+
+  function cardFor(name) {
+    const p = people[name];
+    const el = document.createElement("div");
+    el.className = "card";
+    el.dataset.name = name;
+    el.innerHTML = '<span class="grip" aria-hidden="true">' + grip + '</span>' +
+      '<span class="who"><span class="name"></span><span class="meta"></span></span><span class="rating"></span>';
+    el.querySelector(".name").textContent = name;
+    el.querySelector(".meta").innerHTML = '<span class="pos"></span>';
+    el.querySelector(".pos").textContent = p.position;
+    const more = document.createElement("span");
+    more.className = "more";
+    more.textContent = " · " + p.fitness + " · " + p.workrate + (p.vet ? " · " + p.vet : "");
+    el.querySelector(".meta").appendChild(more);
+    el.querySelector(".rating").textContent = fmt(p.rating);
+    return el;
+  }
+
+  function render() {
+    const root = document.getElementById("brackets");
+    root.innerHTML = "";
+    root.style.display = "flex"; root.style.flexDirection = "column"; root.style.gap = "22px";
+    BRACKETS.forEach(function (b) {
+      const left = state.bibs[b], right = state.non_bibs[b];
+      if (!left.length && !right.length) { return; }
+      const sec = document.createElement("section");
+      sec.className = "bracket";
+      sec.innerHTML = '<div class="bracket-head"><span class="bracket-name"></span><span class="bracket-sum"></span></div>' +
+        '<div class="rows"><div class="list bibs"></div><div class="gutter"></div><div class="list non_bibs"></div></div>';
+      sec.querySelector(".bracket-name").textContent = b;
+      sec.querySelector(".bracket-sum").innerHTML =
+        '<b class="bibs-c">' + left.length + " · " + fmt(sum(left)) + '</b> v <b class="nonbibs-c">' +
+        right.length + " · " + fmt(sum(right)) + "</b>";
+      const rows = Math.max(left.length, right.length);
+      [["bibs", left], ["non_bibs", right]].forEach(function (pair) {
+        const list = sec.querySelector(".list." + pair[0]);
+        list.dataset.team = pair[0];
+        list.dataset.bracket = b;
+        pair[1].forEach(function (n) { list.appendChild(cardFor(n)); });
+        for (let i = pair[1].length; i < rows; i++) {
+          const e = document.createElement("div"); e.className = "empty"; e.textContent = "no pair"; list.appendChild(e);
+        }
+      });
+      const gutter = sec.querySelector(".gutter");
+      for (let i = 0; i < rows; i++) {
+        const d = document.createElement("div");
+        d.className = "delta";
+        if (left[i] && right[i]) {
+          const diff = people[left[i]].rating - people[right[i]].rating;
+          if (Math.abs(diff) < 0.25) { d.classList.add("e"); d.textContent = "="; d.title = "Even"; }
+          else if (diff > 0) { d.classList.add("l"); d.textContent = "◂" + fmt(diff); d.title = "Bibs stronger by " + fmt(diff); }
+          else { d.classList.add("r"); d.textContent = fmt(-diff) + "▸"; d.title = "Non-bibs stronger by " + fmt(-diff); }
+        }
+        gutter.appendChild(d);
+      }
+      root.appendChild(sec);
+    });
+
+    TEAMS.forEach(function (t) {
+      const names = teamNames(t);
+      const shape = ["DEF", "MID", "ATT"].map(function (pos) {
+        return names.filter(function (n) { return people[n].position === pos; }).length;
+      }).join("-");
+      document.getElementById(t + "-total").textContent = fmt(sum(names));
+      document.getElementById(t + "-sub").textContent = names.length + " players · " + shape;
+    });
+    const diff = sum(teamNames("bibs")) - sum(teamNames("non_bibs"));
+    const gap = document.getElementById("gap");
+    gap.classList.toggle("even", Math.abs(diff) < 0.5);
+    gap.textContent = Math.abs(diff) < 0.05 ? "Level" : (diff > 0 ? "◂ " : "") + fmt(Math.abs(diff)) + (diff < 0 ? " ▸" : "");
+  }
+
+  // --- pointer drag: works for mouse anywhere on a card, touch on the grip ---
+  let drag = null;
+
+  document.addEventListener("pointerdown", function (ev) {
+    const card = ev.target.closest(".card");
+    if (!card || card.classList.contains("ghost") || ev.button > 0) { return; }
+    if (ev.pointerType !== "mouse" && !ev.target.closest(".grip")) { return; }
+    ev.preventDefault();
+    const rect = card.getBoundingClientRect();
+    const name = card.dataset.name;
+    const ph = document.createElement("div");
+    ph.className = "placeholder";
+    card.parentNode.insertBefore(ph, card);
+    card.classList.add("ghost");
+    card.style.width = rect.width + "px";
+    card.style.left = rect.left + "px";
+    card.style.top = rect.top + "px";
+    document.body.appendChild(card);
+    document.querySelectorAll(".list").forEach(function (l) {
+      l.classList.toggle("open", l.dataset.bracket === people[name].ability);
+    });
+    document.body.classList.add("dragging");
+    drag = { name: name, card: card, ph: ph, dx: ev.clientX - rect.left, dy: ev.clientY - rect.top, id: ev.pointerId };
+  });
+
+  function listAt(x, y) {
+    const lists = document.querySelectorAll(".list.open");
+    let best = null, bestDist = Infinity;
+    lists.forEach(function (l) {
+      const r = l.getBoundingClientRect();
+      const dx = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+      const dy = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0;
+      const d = dx * dx + dy * dy;
+      if (d < bestDist) { bestDist = d; best = l; }
+    });
+    return best;
+  }
+
+  document.addEventListener("pointermove", function (ev) {
+    if (!drag || ev.pointerId !== drag.id) { return; }
+    drag.card.style.left = (ev.clientX - drag.dx) + "px";
+    drag.card.style.top = (ev.clientY - drag.dy) + "px";
+    const list = listAt(ev.clientX, ev.clientY);
+    if (!list) { return; }
+    const cards = Array.prototype.filter.call(list.children, function (c) { return c.classList.contains("card"); });
+    let before = null;
+    for (let i = 0; i < cards.length; i++) {
+      const r = cards[i].getBoundingClientRect();
+      if (ev.clientY < r.top + r.height / 2) { before = cards[i]; break; }
+    }
+    if (!before) { before = list.querySelector(".empty"); }
+    if (before) { list.insertBefore(drag.ph, before); } else { list.appendChild(drag.ph); }
+    // keep auto-scroll usable on long pages
+    const edge = 60;
+    if (ev.clientY < edge) { window.scrollBy(0, -12); } else if (ev.clientY > window.innerHeight - edge) { window.scrollBy(0, 12); }
+  });
+
+  function finish(ev) {
+    if (!drag || ev.pointerId !== drag.id) { return; }
+    const list = drag.ph.parentNode;
+    const b = people[drag.name].ability;
+    if (list && list.classList.contains("list")) {
+      TEAMS.forEach(function (t) {
+        state[t][b] = state[t][b].filter(function (n) { return n !== drag.name; });
+      });
+      const order = [];
+      Array.prototype.forEach.call(list.children, function (c) {
+        if (c === drag.ph) { order.push(drag.name); }
+        else if (c.classList.contains("card")) { order.push(c.dataset.name); }
+      });
+      state[list.dataset.team][b] = order;
+      save();
+    }
+    drag.card.remove();
+    drag = null;
+    document.body.classList.remove("dragging");
+    render();
+  }
+  document.addEventListener("pointerup", finish);
+  document.addEventListener("pointercancel", finish);
+
+  document.getElementById("reset").addEventListener("click", function () {
+    state = fresh(); save(); render();
+  });
+
+  document.getElementById("copy").addEventListener("click", function (ev) {
+    const lines = ["8v8 at Vandyke School, Monday 26 October"];
+    [["BIBS", "bibs"], ["NON-BIBS", "non_bibs"]].forEach(function (pair) {
+      lines.push("", pair[0]);
+      teamNames(pair[1]).forEach(function (n) { lines.push("  " + n + " (" + people[n].position + ")"); });
+    });
+    const btn = ev.currentTarget;
+    const say = function (t) { btn.textContent = t; setTimeout(function () { btn.textContent = "Copy teams"; }, 1600); };
+    navigator.clipboard.writeText(lines.join("\n")).then(function () { say("Copied"); }, function () { say("Copy blocked"); });
+  });
+
+  render();
+})();
+</script>
