@@ -1,9 +1,11 @@
 """Renders the team-building board: both sides next to each other, to pair,
 swap and re-sort players by hand before the teams are confirmed.
 
-It carries ratings, so like the admin sheet it stays private. Nothing on it is
-saved back to the repository; the user copies the teams out and they are
-committed with `balance --commit --bibs`.
+The admin board carries ratings and stays private; nothing on it is saved back
+to the repository, the user copies the teams out and they are committed with
+`balance --commit --bibs`. The player board is the shared match page: the same
+look, read only, grouped by position, and built from a payload with no ratings
+or bands in it at all.
 """
 
 from __future__ import annotations
@@ -12,10 +14,18 @@ import hashlib
 import json
 
 
-def _player(p: dict) -> dict:
+def _player(p: dict, ratings: bool, goals: dict) -> dict:
     # deferred: the lineup module imports this one
     import lineup as cli
 
+    credit = goals.get(p["id"], {})
+    if not ratings:
+        entry = {"name": p["name"], "position": "GK" if p.get("permanent_keeper") else p["position"]}
+        if credit.get("goals"):
+            entry["goals"] = credit["goals"]
+        if credit.get("own_goals"):
+            entry["own_goals"] = credit["own_goals"]
+        return entry
     return {
         "name": p["name"],
         "position": "GK" if p.get("permanent_keeper") else p["position"],
@@ -29,15 +39,16 @@ def _player(p: dict) -> dict:
     }
 
 
-def build_payload(bibs: list[dict], non_bibs: list[dict], meta: dict) -> dict:
+def build_payload(bibs: list[dict], non_bibs: list[dict], meta: dict, *,
+                  ratings: bool = True, goals: dict | None = None) -> dict:
     roster = sorted(p["name"] for p in bibs + non_bibs)
     # A different squad gets a different storage key, so a stale arrangement
     # saved in the browser never leaks into a new game's board.
     key = hashlib.sha1("|".join([meta["date"]] + roster).encode()).hexdigest()[:10]
     return {
         "meta": dict(meta, key=f"board-{key}"),
-        "bibs": [_player(p) for p in bibs],
-        "non_bibs": [_player(p) for p in non_bibs],
+        "bibs": [_player(p, ratings, goals or {}) for p in bibs],
+        "non_bibs": [_player(p, ratings, goals or {}) for p in non_bibs],
     }
 
 
@@ -183,6 +194,14 @@ TEMPLATE = """<title>__TITLE__</title>
   .delta.r { color: var(--nonbibs); }
   .delta.e { color: var(--even); }
 
+  .player-mode .card { cursor: default; grid-template-columns: 12px minmax(0, 1fr) auto; }
+  .player-mode .grip { visibility: hidden; }
+  .goals { font-size: 13px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .figure.dim { color: var(--muted); }
+  .status { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; background: var(--ink); color: var(--ground); align-self: center; }
+  .venue { display: inline-block; margin-top: 6px; color: var(--muted); font-size: 13px; font-weight: 600; text-decoration: none; }
+  a.venue[href]:hover { color: var(--ink); text-decoration: underline; }
+
   .hint { font-size: 12px; color: var(--muted); text-align: center; text-wrap: balance; }
 
   /* swap prompt */
@@ -216,9 +235,11 @@ TEMPLATE = """<title>__TITLE__</title>
   <header>
     <div>
       <div class="kicker" id="kicker"></div>
-      <h1>Team Builder</h1>
+      <h1 id="title">Team Builder</h1>
+      <a class="venue" id="venue" target="_blank" rel="noopener noreferrer" hidden></a>
     </div>
     <div class="actions">
+      <span class="status" id="status" hidden></span>
       <button class="btn" id="undo" type="button" disabled>Undo</button>
       <button class="btn" id="reset" type="button">Reset</button>
       <button class="btn" id="copy" type="button">Copy teams</button>
@@ -239,7 +260,7 @@ TEMPLATE = """<title>__TITLE__</title>
     </div>
   </section>
 
-  <div class="toolbar">
+  <div class="toolbar" id="toolbar">
     <span class="seg-label">Order by</span>
     <div class="seg" role="group" aria-label="Order by">
       <button type="button" data-mode="custom" aria-pressed="true">Custom</button>
@@ -263,6 +284,21 @@ TEMPLATE = """<title>__TITLE__</title>
 (function () {
   const data = JSON.parse(document.getElementById("data").textContent);
   const meta = data.meta;
+  const isPlayer = meta.mode === "player";
+  if (isPlayer) {
+    document.body.classList.add("player-mode");
+    document.getElementById("title").textContent = "Teams";
+    ["undo", "reset", "toolbar", "hint"].forEach(function (id) { document.getElementById(id).hidden = true; });
+    if (meta.status) {
+      const st = document.getElementById("status");
+      st.textContent = meta.status; st.hidden = false;
+    }
+  }
+  if (meta.venue && meta.venue.text) {
+    const v = document.getElementById("venue");
+    v.textContent = meta.venue.text; v.hidden = false;
+    if (meta.venue.maps_url) { v.href = meta.venue.maps_url; } else { v.removeAttribute("href"); }
+  }
   const TEAMS = ["bibs", "non_bibs"];
   const LABEL = { bibs: "Bibs", non_bibs: "Non-bibs" };
   const GROUPS = {
@@ -281,8 +317,9 @@ TEMPLATE = """<title>__TITLE__</title>
   function fresh() {
     const s = {};
     TEAMS.forEach(function (t) {
-      s[t] = data[t].slice().sort(function (x, y) { return y.rating - x.rating; })
-        .map(function (p) { return p.name; });
+      const players = data[t].slice();
+      if (!isPlayer) { players.sort(function (x, y) { return y.rating - x.rating; }); }
+      s[t] = players.map(function (p) { return p.name; });
     });
     return s;
   }
@@ -295,8 +332,8 @@ TEMPLATE = """<title>__TITLE__</title>
   function load(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
   function store(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
 
-  let state = valid(load(meta.key)) ? load(meta.key) : fresh();
-  let mode = GROUPS[load(meta.key + "-mode")] ? load(meta.key + "-mode") : "custom";
+  let state = !isPlayer && valid(load(meta.key)) ? load(meta.key) : fresh();
+  let mode = isPlayer ? "position" : GROUPS[load(meta.key + "-mode")] ? load(meta.key + "-mode") : "custom";
   let selected = null;
   const history = [];
 
@@ -311,7 +348,10 @@ TEMPLATE = """<title>__TITLE__</title>
 
   const fmt = function (v) { return v.toFixed(1); };
   const sum = function (names) { return names.reduce(function (a, n) { return a + people[n].rating; }, 0); };
-  const byRating = function (a, b) { return people[b].rating - people[a].rating || a.localeCompare(b); };
+  // the shared page must not rank anyone, so it sorts by name
+  const byRating = isPlayer
+    ? function (a, b) { return a.localeCompare(b); }
+    : function (a, b) { return people[b].rating - people[a].rating || a.localeCompare(b); };
   const grip = '<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg>';
 
   function cardFor(name) {
@@ -326,6 +366,18 @@ TEMPLATE = """<title>__TITLE__</title>
       '<span class="rating"></span>';
     el.querySelector(".name").textContent = name + (p.captain ? " (C)" : "");
     el.querySelector(".pos").textContent = p.position;
+    if (isPlayer) {
+      el.removeAttribute("role");
+      el.removeAttribute("tabindex");
+      const marks = [];
+      if (p.goals) { marks.push(p.goals > 1 ? "\\u26bd \\u00d7" + p.goals : "\\u26bd"); }
+      if (p.own_goals) { marks.push(p.own_goals > 1 ? "OG \\u00d7" + p.own_goals : "OG"); }
+      const r = el.querySelector(".rating");
+      r.className = "goals";
+      r.textContent = marks.join(" ");
+      el.setAttribute("aria-label", name + ", " + p.position);
+      return el;
+    }
     // the grouping in force is already in the header, so show the other facts
     const facts = [p.ability, p.fitness, p.workrate].concat(p.vet ? [p.vet] : []);
     el.querySelector(".more").textContent = " \\u00b7 " + facts.join(" \\u00b7 ");
@@ -358,7 +410,9 @@ TEMPLATE = """<title>__TITLE__</title>
         const off = left.length !== right.length;
         sec.innerHTML = '<div class="group-head"><span class="group-name"></span><span class="group-sum"></span></div>';
         sec.querySelector(".group-name").textContent = grp.label;
-        sec.querySelector(".group-sum").innerHTML =
+        sec.querySelector(".group-sum").innerHTML = isPlayer
+          ? '<b class="bibs-c">' + left.length + '</b> <span class="' + (off ? "off" : "") + '">v</span> <b class="nonbibs-c">' + right.length + '</b>'
+          :
           '<b class="bibs-c">' + left.length + '</b> \\u00b7 ' + fmt(sum(left)) +
           ' <span class="' + (off ? "off" : "") + '">v</span> ' +
           fmt(sum(right)) + ' \\u00b7 <b class="nonbibs-c">' + right.length + '</b>';
@@ -376,14 +430,14 @@ TEMPLATE = """<title>__TITLE__</title>
           list.appendChild(card);
         });
         for (let i = pair[1].length; i < rows; i++) {
-          const e = document.createElement("div"); e.className = "empty"; e.textContent = "no pair"; list.appendChild(e);
+          const e = document.createElement("div"); e.className = "empty"; e.textContent = isPlayer ? "" : "no pair"; list.appendChild(e);
         }
       });
       const gutter = wrap.querySelector(".gutter");
       for (let i = 0; i < rows; i++) {
         const d = document.createElement("div");
         d.className = "delta";
-        if (left[i] && right[i]) {
+        if (!isPlayer && left[i] && right[i]) {
           const diff = people[left[i]].rating - people[right[i]].rating;
           if (Math.abs(diff) < 0.05) { d.classList.add("e"); d.textContent = "="; d.title = "Level"; }
           else if (diff > 0) { d.classList.add("l"); d.textContent = "\\u25c2" + fmt(diff); d.title = "Bibs stronger by " + fmt(diff); }
@@ -399,9 +453,19 @@ TEMPLATE = """<title>__TITLE__</title>
       const names = state[t];
       const count = function (pos) { return names.filter(function (n) { return people[n].position === pos; }).length; };
       const shape = (count("GK") ? count("GK") + " GK \\u00b7 " : "") + [count("DEF"), count("MID"), count("ATT")].join("-");
-      document.getElementById(t + "-total").textContent = fmt(sum(names));
       document.getElementById(t + "-sub").textContent = names.length + " players \\u00b7 " + shape;
+      const total = document.getElementById(t + "-total");
+      if (isPlayer) {
+        total.textContent = meta.score ? meta.score[t] : "\\u2013";
+        total.classList.toggle("dim", !meta.score);
+      } else {
+        total.textContent = fmt(sum(names));
+      }
     });
+    if (isPlayer) {
+      document.getElementById("gap").textContent = "v";
+      return;
+    }
     const diff = sum(state.bibs) - sum(state.non_bibs);
     const gap = document.getElementById("gap");
     gap.classList.toggle("even", Math.abs(diff) < 0.5);
@@ -426,6 +490,7 @@ TEMPLATE = """<title>__TITLE__</title>
 
   // --- tap to swap ---
   function tap(name) {
+    if (isPlayer) { return; }
     if (!selected) { selected = name; render(); return; }
     if (selected === name) { selected = null; render(); return; }
     const a = selected, ta = teamOf(a), tb = teamOf(name);
@@ -456,7 +521,7 @@ TEMPLATE = """<title>__TITLE__</title>
 
   document.addEventListener("pointerdown", function (ev) {
     const card = ev.target.closest(".card");
-    if (!card || card.classList.contains("ghost") || ev.button > 0) { return; }
+    if (isPlayer || !card || card.classList.contains("ghost") || ev.button > 0) { return; }
     const canDrag = ev.pointerType === "mouse" || !!ev.target.closest(".grip");
     if (canDrag) { ev.preventDefault(); }
     press = { card: card, x: ev.clientX, y: ev.clientY, id: ev.pointerId, canDrag: canDrag };

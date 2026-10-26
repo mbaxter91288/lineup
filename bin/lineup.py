@@ -602,13 +602,16 @@ def write_game_pages(game: dict) -> tuple[Path, Path]:
         render_html.build_payload(squad, splits, admin_meta, goals=goals, lineup=lineup)))
 
     venue_name = location["name"].split()[0] if location else "Team"
+    # The shared page is the board in its read-only player mode: teams side by
+    # side and grouped by position, from a payload with no ratings in it.
     player_meta = _meta(game["date"], sizes, location,
                         title=f"{venue_name} {fmt} {day.strftime('%-d %b')}",
-                        status=status, mode="player", score=score, recommended=0)
+                        status=status, mode="player",
+                        score=game["score"] if played else None, recommended=0)
+    player_meta["date"] = game["date"]
     player_path = ARTIFACTS / f"match-{game['date']}.html"
-    player_path.write_text(render_html.render(
-        render_html.build_payload(squad, splits, player_meta, ratings=False,
-                                  goals=goals, lineup=lineup)))
+    player_path.write_text(render_board.render(
+        render_board.build_payload(bibs, non_bibs, player_meta, ratings=False, goals=goals)))
 
     return admin_path, player_path
 

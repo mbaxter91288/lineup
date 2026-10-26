@@ -131,9 +131,9 @@ Pinned players keep their role and everyone else is fitted around them. A shape 
 Each game has two pages, both rewritten whenever the game moves on:
 
 - `artifacts/teams-<date>.html` — **admin.** Everything: candidate splits while teams are being chosen, then the confirmed teams with ratings, fitness and balance stats. This one stays private.
-- `artifacts/match-<date>.html` — **player.** Written from the moment the teams are confirmed. Teams, positions, score and scorers, and no ratings anywhere in the file, not even in its data — this is the link the user shares with the lads, so nothing in it can embarrass anyone. Players appear on the pitch as initials rather than ratings.
+- `artifacts/match-<date>.html` — **player.** Written from the moment the teams are confirmed. It is the team builder's look in a read-only mode: bibs and non-bibs side by side, grouped into defenders, midfielders and attackers (alphabetical within each, so nothing ranks anyone), with the score and a ball beside each scorer once played. No ratings or bands anywhere in the file, not even in its data — this is the link the user shares with the lads, so nothing in it can embarrass anyone.
 
-Both have a table view and a pitch view; on the pitch, players animate to their new spots when the option changes, and a team with no goalkeeper puts its lowest-rated defender in goal — a visual choice only, which never changes anyone's stored position.
+The admin page has a table view and a pitch view; on the pitch, players animate to their new spots when the option changes, and a team with no goalkeeper puts its lowest-rated defender in goal — a visual choice only, which never changes anyone's stored position.
 
 Never put a rating, a fitness score or a balance number on the player page, and never point the user at the admin link when they ask for something to share.
 

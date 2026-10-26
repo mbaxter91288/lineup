@@ -133,6 +133,14 @@
   .delta.r { color: var(--nonbibs); }
   .delta.e { color: var(--even); }
 
+  .player-mode .card { cursor: default; grid-template-columns: 12px minmax(0, 1fr) auto; }
+  .player-mode .grip { visibility: hidden; }
+  .goals { font-size: 13px; font-weight: 700; color: var(--muted); white-space: nowrap; }
+  .figure.dim { color: var(--muted); }
+  .status { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; background: var(--ink); color: var(--ground); align-self: center; }
+  .venue { display: inline-block; margin-top: 6px; color: var(--muted); font-size: 13px; font-weight: 600; text-decoration: none; }
+  a.venue[href]:hover { color: var(--ink); text-decoration: underline; }
+
   .hint { font-size: 12px; color: var(--muted); text-align: center; text-wrap: balance; }
 
   /* swap prompt */
@@ -166,9 +174,11 @@
   <header>
     <div>
       <div class="kicker" id="kicker"></div>
-      <h1>Team Builder</h1>
+      <h1 id="title">Team Builder</h1>
+      <a class="venue" id="venue" target="_blank" rel="noopener noreferrer" hidden></a>
     </div>
     <div class="actions">
+      <span class="status" id="status" hidden></span>
       <button class="btn" id="undo" type="button" disabled>Undo</button>
       <button class="btn" id="reset" type="button">Reset</button>
       <button class="btn" id="copy" type="button">Copy teams</button>
@@ -189,7 +199,7 @@
     </div>
   </section>
 
-  <div class="toolbar">
+  <div class="toolbar" id="toolbar">
     <span class="seg-label">Order by</span>
     <div class="seg" role="group" aria-label="Order by">
       <button type="button" data-mode="custom" aria-pressed="true">Custom</button>
@@ -208,11 +218,26 @@
   <button type="button" id="prompt-cancel">Cancel</button>
 </div>
 
-<script id="data" type="application/json">{"meta": {"title": "Team Builder 26 Oct", "kicker": "Monday 26 October", "heading": "8v8 at Vandyke School", "status": "", "venue": {"text": "Vandyke School, Leighton Buzzard", "maps_url": "https://www.google.com/maps/search/?api=1&query=Vandyke+School+Leighton+Buzzard"}, "score": null, "recommended": 0, "mode": "admin", "date": "2026-10-26", "key": "board-6fd7b7ed6b"}, "bibs": [{"name": "Lee Kent", "position": "ATT", "rating": 6.6, "ability": "Saturday", "fitness": "Good", "fitness_value": 7.75, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Ryan Cooper", "position": "ATT", "rating": 5.1, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 4.25, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Chris Vernon", "position": "MID", "rating": 6.4, "ability": "Saturday", "fitness": "Good", "fitness_value": 7.0, "workrate": "Grafter", "vet": "Vet", "captain": false}, {"name": "Luke Reddington", "position": "DEF", "rating": 5.0, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 5.0, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Anton Thompson", "position": "ATT", "rating": 4.8, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 5.0, "workrate": "Steady", "vet": "Vet", "captain": false}, {"name": "John Bassil", "position": "DEF", "rating": 3.2, "ability": "Rec", "fitness": "Moderate", "fitness_value": 5.0, "workrate": "Passenger", "vet": "", "captain": false}, {"name": "Lewis Denton", "position": "DEF", "rating": 6.3, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 6.0, "workrate": "Grafter", "vet": "", "captain": false}, {"name": "Mat Baxter", "position": "MID", "rating": 7.7, "ability": "Saturday", "fitness": "Engine", "fitness_value": 9.5, "workrate": "Grafter", "vet": "", "captain": false}], "non_bibs": [{"name": "Charlie Hall", "position": "MID", "rating": 6.9, "ability": "Saturday", "fitness": "Engine", "fitness_value": 9.0, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Dan Hall", "position": "MID", "rating": 5.7, "ability": "Saturday", "fitness": "Low", "fitness_value": 3.0, "workrate": "Steady", "vet": "Vet", "captain": false}, {"name": "Cristian Paslaru", "position": "MID", "rating": 5.9, "ability": "Sunday", "fitness": "Good", "fitness_value": 8.0, "workrate": "Grafter", "vet": "", "captain": false}, {"name": "Stuart Dickinson", "position": "DEF", "rating": 5.0, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 5.0, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Harry Felmingham", "position": "DEF", "rating": 7.9, "ability": "Saturday", "fitness": "Good", "fitness_value": 7.0, "workrate": "Grafter", "vet": "", "captain": false}, {"name": "Callum Miller", "position": "ATT", "rating": 6.5, "ability": "Saturday", "fitness": "Good", "fitness_value": 7.0, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Maicon Nunes", "position": "DEF", "rating": 3.1, "ability": "Rec", "fitness": "Low", "fitness_value": 3.0, "workrate": "Steady", "vet": "Vet", "captain": false}, {"name": "Ryan Springell", "position": "DEF", "rating": 5.3, "ability": "Rec", "fitness": "Engine", "fitness_value": 9.0, "workrate": "Relentless", "vet": "", "captain": false}]}</script>
+<script id="data" type="application/json">{"meta": {"title": "Team Builder 26 Oct", "kicker": "Monday 26 October", "heading": "8v8 at Vandyke School", "status": "", "venue": {"text": "Vandyke School, Leighton Buzzard", "maps_url": "https://www.google.com/maps/search/?api=1&query=Vandyke+School+Leighton+Buzzard"}, "score": null, "recommended": 0, "mode": "admin", "date": "2026-10-26", "key": "board-6fd7b7ed6b"}, "bibs": [{"name": "Lee Kent", "position": "ATT", "rating": 6.6, "ability": "Saturday", "fitness": "Good", "fitness_value": 7.75, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Ryan Cooper", "position": "ATT", "rating": 5.1, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 4.25, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Mat Baxter", "position": "MID", "rating": 7.7, "ability": "Saturday", "fitness": "Engine", "fitness_value": 9.5, "workrate": "Grafter", "vet": "", "captain": false}, {"name": "Chris Vernon", "position": "MID", "rating": 6.4, "ability": "Saturday", "fitness": "Good", "fitness_value": 7.0, "workrate": "Grafter", "vet": "Vet", "captain": false}, {"name": "Luke Reddington", "position": "DEF", "rating": 5.0, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 5.0, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Harry Felmingham", "position": "DEF", "rating": 7.9, "ability": "Saturday", "fitness": "Good", "fitness_value": 7.0, "workrate": "Grafter", "vet": "", "captain": false}, {"name": "John Bassil", "position": "DEF", "rating": 3.2, "ability": "Rec", "fitness": "Moderate", "fitness_value": 5.0, "workrate": "Passenger", "vet": "", "captain": false}, {"name": "Maicon Nunes", "position": "DEF", "rating": 3.1, "ability": "Rec", "fitness": "Low", "fitness_value": 3.0, "workrate": "Steady", "vet": "Vet", "captain": false}], "non_bibs": [{"name": "Callum Miller", "position": "ATT", "rating": 6.5, "ability": "Saturday", "fitness": "Good", "fitness_value": 7.0, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Anton Thompson", "position": "ATT", "rating": 4.8, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 5.0, "workrate": "Steady", "vet": "Vet", "captain": false}, {"name": "Charlie Hall", "position": "MID", "rating": 6.9, "ability": "Saturday", "fitness": "Engine", "fitness_value": 9.0, "workrate": "Steady", "vet": "", "captain": false}, {"name": "Cristian Paslaru", "position": "MID", "rating": 5.9, "ability": "Sunday", "fitness": "Good", "fitness_value": 8.0, "workrate": "Grafter", "vet": "", "captain": false}, {"name": "Dan Hall", "position": "MID", "rating": 5.7, "ability": "Saturday", "fitness": "Low", "fitness_value": 3.0, "workrate": "Steady", "vet": "Vet", "captain": false}, {"name": "Lewis Denton", "position": "DEF", "rating": 6.3, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 6.0, "workrate": "Grafter", "vet": "", "captain": false}, {"name": "Ryan Springell", "position": "DEF", "rating": 5.3, "ability": "Rec", "fitness": "Engine", "fitness_value": 9.0, "workrate": "Relentless", "vet": "", "captain": false}, {"name": "Stuart Dickinson", "position": "DEF", "rating": 5.0, "ability": "Sunday", "fitness": "Moderate", "fitness_value": 5.0, "workrate": "Steady", "vet": "", "captain": false}]}</script>
 <script>
 (function () {
   const data = JSON.parse(document.getElementById("data").textContent);
   const meta = data.meta;
+  const isPlayer = meta.mode === "player";
+  if (isPlayer) {
+    document.body.classList.add("player-mode");
+    document.getElementById("title").textContent = "Teams";
+    ["undo", "reset", "toolbar", "hint"].forEach(function (id) { document.getElementById(id).hidden = true; });
+    if (meta.status) {
+      const st = document.getElementById("status");
+      st.textContent = meta.status; st.hidden = false;
+    }
+  }
+  if (meta.venue && meta.venue.text) {
+    const v = document.getElementById("venue");
+    v.textContent = meta.venue.text; v.hidden = false;
+    if (meta.venue.maps_url) { v.href = meta.venue.maps_url; } else { v.removeAttribute("href"); }
+  }
   const TEAMS = ["bibs", "non_bibs"];
   const LABEL = { bibs: "Bibs", non_bibs: "Non-bibs" };
   const GROUPS = {
@@ -231,8 +256,9 @@
   function fresh() {
     const s = {};
     TEAMS.forEach(function (t) {
-      s[t] = data[t].slice().sort(function (x, y) { return y.rating - x.rating; })
-        .map(function (p) { return p.name; });
+      const players = data[t].slice();
+      if (!isPlayer) { players.sort(function (x, y) { return y.rating - x.rating; }); }
+      s[t] = players.map(function (p) { return p.name; });
     });
     return s;
   }
@@ -245,8 +271,8 @@
   function load(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
   function store(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
 
-  let state = valid(load(meta.key)) ? load(meta.key) : fresh();
-  let mode = GROUPS[load(meta.key + "-mode")] ? load(meta.key + "-mode") : "custom";
+  let state = !isPlayer && valid(load(meta.key)) ? load(meta.key) : fresh();
+  let mode = isPlayer ? "position" : GROUPS[load(meta.key + "-mode")] ? load(meta.key + "-mode") : "custom";
   let selected = null;
   const history = [];
 
@@ -261,7 +287,10 @@
 
   const fmt = function (v) { return v.toFixed(1); };
   const sum = function (names) { return names.reduce(function (a, n) { return a + people[n].rating; }, 0); };
-  const byRating = function (a, b) { return people[b].rating - people[a].rating || a.localeCompare(b); };
+  // the shared page must not rank anyone, so it sorts by name
+  const byRating = isPlayer
+    ? function (a, b) { return a.localeCompare(b); }
+    : function (a, b) { return people[b].rating - people[a].rating || a.localeCompare(b); };
   const grip = '<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg>';
 
   function cardFor(name) {
@@ -276,6 +305,18 @@
       '<span class="rating"></span>';
     el.querySelector(".name").textContent = name + (p.captain ? " (C)" : "");
     el.querySelector(".pos").textContent = p.position;
+    if (isPlayer) {
+      el.removeAttribute("role");
+      el.removeAttribute("tabindex");
+      const marks = [];
+      if (p.goals) { marks.push(p.goals > 1 ? "\u26bd \u00d7" + p.goals : "\u26bd"); }
+      if (p.own_goals) { marks.push(p.own_goals > 1 ? "OG \u00d7" + p.own_goals : "OG"); }
+      const r = el.querySelector(".rating");
+      r.className = "goals";
+      r.textContent = marks.join(" ");
+      el.setAttribute("aria-label", name + ", " + p.position);
+      return el;
+    }
     // the grouping in force is already in the header, so show the other facts
     const facts = [p.ability, p.fitness, p.workrate].concat(p.vet ? [p.vet] : []);
     el.querySelector(".more").textContent = " \u00b7 " + facts.join(" \u00b7 ");
@@ -308,7 +349,9 @@
         const off = left.length !== right.length;
         sec.innerHTML = '<div class="group-head"><span class="group-name"></span><span class="group-sum"></span></div>';
         sec.querySelector(".group-name").textContent = grp.label;
-        sec.querySelector(".group-sum").innerHTML =
+        sec.querySelector(".group-sum").innerHTML = isPlayer
+          ? '<b class="bibs-c">' + left.length + '</b> <span class="' + (off ? "off" : "") + '">v</span> <b class="nonbibs-c">' + right.length + '</b>'
+          :
           '<b class="bibs-c">' + left.length + '</b> \u00b7 ' + fmt(sum(left)) +
           ' <span class="' + (off ? "off" : "") + '">v</span> ' +
           fmt(sum(right)) + ' \u00b7 <b class="nonbibs-c">' + right.length + '</b>';
@@ -326,14 +369,14 @@
           list.appendChild(card);
         });
         for (let i = pair[1].length; i < rows; i++) {
-          const e = document.createElement("div"); e.className = "empty"; e.textContent = "no pair"; list.appendChild(e);
+          const e = document.createElement("div"); e.className = "empty"; e.textContent = isPlayer ? "" : "no pair"; list.appendChild(e);
         }
       });
       const gutter = wrap.querySelector(".gutter");
       for (let i = 0; i < rows; i++) {
         const d = document.createElement("div");
         d.className = "delta";
-        if (left[i] && right[i]) {
+        if (!isPlayer && left[i] && right[i]) {
           const diff = people[left[i]].rating - people[right[i]].rating;
           if (Math.abs(diff) < 0.05) { d.classList.add("e"); d.textContent = "="; d.title = "Level"; }
           else if (diff > 0) { d.classList.add("l"); d.textContent = "\u25c2" + fmt(diff); d.title = "Bibs stronger by " + fmt(diff); }
@@ -349,9 +392,19 @@
       const names = state[t];
       const count = function (pos) { return names.filter(function (n) { return people[n].position === pos; }).length; };
       const shape = (count("GK") ? count("GK") + " GK \u00b7 " : "") + [count("DEF"), count("MID"), count("ATT")].join("-");
-      document.getElementById(t + "-total").textContent = fmt(sum(names));
       document.getElementById(t + "-sub").textContent = names.length + " players \u00b7 " + shape;
+      const total = document.getElementById(t + "-total");
+      if (isPlayer) {
+        total.textContent = meta.score ? meta.score[t] : "\u2013";
+        total.classList.toggle("dim", !meta.score);
+      } else {
+        total.textContent = fmt(sum(names));
+      }
     });
+    if (isPlayer) {
+      document.getElementById("gap").textContent = "v";
+      return;
+    }
     const diff = sum(state.bibs) - sum(state.non_bibs);
     const gap = document.getElementById("gap");
     gap.classList.toggle("even", Math.abs(diff) < 0.5);
@@ -376,6 +429,7 @@
 
   // --- tap to swap ---
   function tap(name) {
+    if (isPlayer) { return; }
     if (!selected) { selected = name; render(); return; }
     if (selected === name) { selected = null; render(); return; }
     const a = selected, ta = teamOf(a), tb = teamOf(name);
@@ -406,7 +460,7 @@
 
   document.addEventListener("pointerdown", function (ev) {
     const card = ev.target.closest(".card");
-    if (!card || card.classList.contains("ghost") || ev.button > 0) { return; }
+    if (isPlayer || !card || card.classList.contains("ghost") || ev.button > 0) { return; }
     const canDrag = ev.pointerType === "mouse" || !!ev.target.closest(".grip");
     if (canDrag) { ev.preventDefault(); }
     press = { card: card, x: ev.clientX, y: ev.clientY, id: ev.pointerId, canDrag: canDrag };
