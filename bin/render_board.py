@@ -1,0 +1,597 @@
+"""Renders the team-building board: both sides next to each other, to pair,
+swap and re-sort players by hand before the teams are confirmed.
+
+It carries ratings, so like the admin sheet it stays private. Nothing on it is
+saved back to the repository; the user copies the teams out and they are
+committed with `balance --commit --bibs`.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+
+
+def _player(p: dict) -> dict:
+    # deferred: the lineup module imports this one
+    import lineup as cli
+
+    return {
+        "name": p["name"],
+        "position": "GK" if p.get("permanent_keeper") else p["position"],
+        "rating": cli.rating_of(p),
+        "ability": cli.ABILITY_SHORT[cli.ability_level(p)],
+        "fitness": cli.FITNESS_LABELS[cli.fitness_level(p)],
+        "fitness_value": cli.fitness_of(p),
+        "workrate": cli.WORKRATE_LABELS[cli.workrate_level(p)],
+        "vet": cli.VET_LABELS[cli.vet_level(p)],
+        "captain": bool(p.get("captain")),
+    }
+
+
+def build_payload(bibs: list[dict], non_bibs: list[dict], meta: dict) -> dict:
+    roster = sorted(p["name"] for p in bibs + non_bibs)
+    # A different squad gets a different storage key, so a stale arrangement
+    # saved in the browser never leaks into a new game's board.
+    key = hashlib.sha1("|".join([meta["date"]] + roster).encode()).hexdigest()[:10]
+    return {
+        "meta": dict(meta, key=f"board-{key}"),
+        "bibs": [_player(p) for p in bibs],
+        "non_bibs": [_player(p) for p in non_bibs],
+    }
+
+
+def render(payload: dict) -> str:
+    data = json.dumps(payload).replace("</", "<\\/")
+    return (TEMPLATE
+            .replace("__TITLE__", payload["meta"]["title"])
+            .replace("__DATA__", data))
+
+
+TEMPLATE = """<title>__TITLE__</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+  /* Layout: two kit-coloured columns facing each other row for row, a narrow
+     gutter that reads the gap on each pair, and a sort switch that regroups
+     both sides at once without losing the hand-made order underneath. */
+  :root {
+    --ground: #eef0ea;
+    --surface: #ffffff;
+    --sunk: #e3e6dd;
+    --line: #d9ddd2;
+    --ink: #16180f;
+    --muted: #6d7266;
+    --bibs: #cf5a2c;
+    --nonbibs: #34557d;
+    --even: #3e7a4a;
+    --warn: #b7791f;
+    --select: #e5a63b;
+    --shadow: 0 1px 2px rgba(22, 24, 15, .06), 0 8px 20px -14px rgba(22, 24, 15, .45);
+    --lift: 0 18px 40px -12px rgba(22, 24, 15, .45);
+    --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+    --body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --card-h: 58px;
+    --gap: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #111310; --surface: #1b1d19; --sunk: #252822; --line: #30342c;
+      --ink: #eef0e8; --muted: #9a9f92;
+      --bibs: #f0834f; --nonbibs: #86aad9; --even: #7fc28c; --warn: #e0a84a; --select: #f6c76a;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 20px -14px rgba(0, 0, 0, .9);
+      --lift: 0 18px 40px -12px rgba(0, 0, 0, .9);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #111310; --surface: #1b1d19; --sunk: #252822; --line: #30342c;
+    --ink: #eef0e8; --muted: #9a9f92;
+    --bibs: #f0834f; --nonbibs: #86aad9; --even: #7fc28c; --warn: #e0a84a; --select: #f6c76a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 20px -14px rgba(0, 0, 0, .9);
+    --lift: 0 18px 40px -12px rgba(0, 0, 0, .9);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    background: var(--ground); color: var(--ink);
+    font-family: var(--body); font-size: 14px; line-height: 1.4;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 860px; margin: 0 auto;
+    padding-block: 24px 110px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: flex; flex-direction: column; gap: 16px;
+  }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+  .kicker { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-family: var(--display); font-size: 34px; font-weight: 800; letter-spacing: .01em; text-transform: uppercase; margin: 2px 0 0; line-height: 1; text-wrap: balance; }
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  button { font: inherit; color: inherit; cursor: pointer; border: none; background: none; }
+  button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  button:disabled { opacity: .4; cursor: default; }
+  .btn { padding: 8px 14px; border-radius: 8px; background: var(--surface); box-shadow: var(--shadow); font-size: 13px; font-weight: 700; color: var(--muted); }
+  .btn:not(:disabled):hover { color: var(--ink); }
+
+  /* scoreboard */
+  .board { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px;
+           background: var(--surface); border-radius: 12px; box-shadow: var(--shadow); padding: 14px 18px; }
+  .side-total { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .side-total.right { text-align: right; align-items: flex-end; }
+  .side-name { font-family: var(--display); font-size: 18px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .bibs-c { color: var(--bibs); }
+  .nonbibs-c { color: var(--nonbibs); }
+  .figure { font-family: var(--display); font-size: 36px; font-weight: 700; line-height: 1; }
+  .sub { font-size: 12px; color: var(--muted); font-weight: 600; }
+  .gap-pill { font-family: var(--display); font-size: 15px; font-weight: 700; letter-spacing: .04em; padding: 6px 12px; border-radius: 999px; background: var(--sunk); color: var(--muted); white-space: nowrap; text-align: center; }
+  .gap-pill.even { color: var(--even); }
+
+  /* sort switch */
+  .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .seg { display: flex; gap: 2px; padding: 3px; border-radius: 10px; background: var(--sunk); }
+  .seg button { padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; color: var(--muted); }
+  .seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+  .seg-label { font-size: 11px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+
+  /* groups */
+  #groups { display: flex; flex-direction: column; gap: 20px; }
+  .group { display: flex; flex-direction: column; gap: 8px; }
+  .group-head { display: flex; align-items: baseline; gap: 10px; border-bottom: 1.5px solid var(--line); padding-bottom: 6px; }
+  .group-name { font-family: var(--display); font-size: 20px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+  .group-sum { font-size: 12px; color: var(--muted); font-weight: 600; margin-left: auto; white-space: nowrap; }
+  .group-sum b { font-weight: 800; }
+  .group-sum .off { color: var(--warn); }
+  .rows { display: grid; grid-template-columns: minmax(0, 1fr) 46px minmax(0, 1fr); gap: 0 8px; }
+  .list, .gutter { display: flex; flex-direction: column; gap: var(--gap); min-height: var(--card-h); border-radius: 10px; }
+  .list { transition: background-color .15s ease, opacity .15s ease; }
+  .dragging .list:not(.open) { opacity: .45; }
+  .dragging .list.open { background: var(--sunk); outline: 1.5px dashed var(--line); outline-offset: 3px; }
+
+  .card {
+    height: var(--card-h); display: grid;
+    grid-template-columns: 26px minmax(0, 1fr) auto; align-items: center;
+    background: var(--surface); border-radius: 9px; box-shadow: var(--shadow);
+    padding-right: 10px; user-select: none; -webkit-user-select: none;
+    border-left: 4px solid transparent; cursor: pointer;
+    transition: box-shadow .15s ease, transform .15s ease;
+  }
+  .list.bibs .card { border-left-color: var(--bibs); }
+  .list.non_bibs .card { border-left-color: var(--nonbibs); }
+  .card.selected { box-shadow: 0 0 0 2.5px var(--select), var(--shadow); }
+  .card.flash { animation: flash .7s ease; }
+  @keyframes flash { 0% { box-shadow: 0 0 0 3px var(--select), var(--shadow); } 100% { box-shadow: var(--shadow); } }
+  .grip { height: 100%; display: grid; place-items: center; color: var(--muted); cursor: grab; touch-action: none; }
+  .card .who { min-width: 0; display: flex; flex-direction: column; }
+  .name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meta { font-size: 11px; color: var(--muted); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pos { font-weight: 800; letter-spacing: .04em; }
+  .rating { font-family: var(--display); font-size: 22px; font-weight: 700; padding-left: 8px; }
+  .card.ghost { position: fixed; z-index: 50; box-shadow: var(--lift); pointer-events: none; transform: rotate(-1.2deg); cursor: grabbing; }
+  .placeholder { height: var(--card-h); border-radius: 9px; border: 2px dashed var(--muted); opacity: .5; flex: none; }
+  .empty { height: var(--card-h); border-radius: 9px; border: 1.5px dashed var(--line); display: grid; place-items: center; font-size: 11px; font-weight: 600; color: var(--muted); }
+
+  .delta { height: var(--card-h); display: grid; place-items: center; font-family: var(--display); font-size: 15px; font-weight: 700; color: var(--muted); }
+  .delta.l { color: var(--bibs); }
+  .delta.r { color: var(--nonbibs); }
+  .delta.e { color: var(--even); }
+
+  .hint { font-size: 12px; color: var(--muted); text-align: center; text-wrap: balance; }
+
+  /* swap prompt */
+  .prompt {
+    position: fixed; left: 50%; transform: translateX(-50%);
+    bottom: calc(16px + env(safe-area-inset-bottom, 0px)); z-index: 40;
+    display: flex; align-items: center; gap: 12px;
+    max-width: calc(100% - 32px); padding: 10px 10px 10px 16px; border-radius: 12px;
+    background: var(--ink); color: var(--ground); box-shadow: var(--lift);
+    font-size: 13px; font-weight: 600;
+  }
+  .prompt b { font-weight: 800; }
+  .prompt button { padding: 6px 10px; border-radius: 8px; background: var(--ground); color: var(--ink); font-size: 12px; font-weight: 700; flex: none; }
+
+  @media (max-width: 560px) {
+    h1 { font-size: 28px; }
+    .figure { font-size: 30px; }
+    .rows { grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr); gap: 0 5px; }
+    .card { grid-template-columns: 22px minmax(0, 1fr) auto; padding-right: 7px; border-left-width: 3px; }
+    .name { font-size: 13px; white-space: normal; line-height: 1.2; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .meta .more { display: none; }
+    .rating { font-size: 19px; padding-left: 4px; }
+    .delta { font-size: 13px; }
+    .board { padding: 12px 14px; }
+    .seg button { padding: 7px 11px; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } .card.ghost { transform: none; } }
+</style>
+
+<div class="page">
+  <header>
+    <div>
+      <div class="kicker" id="kicker"></div>
+      <h1>Team Builder</h1>
+    </div>
+    <div class="actions">
+      <button class="btn" id="undo" type="button" disabled>Undo</button>
+      <button class="btn" id="reset" type="button">Reset</button>
+      <button class="btn" id="copy" type="button">Copy teams</button>
+    </div>
+  </header>
+
+  <section class="board" aria-live="polite">
+    <div class="side-total">
+      <span class="side-name bibs-c">Bibs</span>
+      <span class="figure" id="bibs-total"></span>
+      <span class="sub" id="bibs-sub"></span>
+    </div>
+    <span class="gap-pill" id="gap"></span>
+    <div class="side-total right">
+      <span class="side-name nonbibs-c">Non-bibs</span>
+      <span class="figure" id="non_bibs-total"></span>
+      <span class="sub" id="non_bibs-sub"></span>
+    </div>
+  </section>
+
+  <div class="toolbar">
+    <span class="seg-label">Order by</span>
+    <div class="seg" role="group" aria-label="Order by">
+      <button type="button" data-mode="custom" aria-pressed="true">Custom</button>
+      <button type="button" data-mode="position" aria-pressed="false">Position</button>
+      <button type="button" data-mode="ability" aria-pressed="false">Ability</button>
+    </div>
+  </div>
+
+  <div id="groups"></div>
+
+  <p class="hint" id="hint"></p>
+</div>
+
+<div class="prompt" id="prompt" hidden>
+  <span id="prompt-text"></span>
+  <button type="button" id="prompt-cancel">Cancel</button>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>
+(function () {
+  const data = JSON.parse(document.getElementById("data").textContent);
+  const meta = data.meta;
+  const TEAMS = ["bibs", "non_bibs"];
+  const LABEL = { bibs: "Bibs", non_bibs: "Non-bibs" };
+  const GROUPS = {
+    position: { key: "position", order: ["GK", "DEF", "MID", "ATT"],
+                names: { GK: "Goalkeepers", DEF: "Defenders", MID: "Midfielders", ATT: "Attackers" } },
+    ability: { key: "ability", order: ["Semi-pro", "Saturday", "Sunday", "Rec"],
+               names: { "Semi-pro": "Semi-pro", Saturday: "Saturday", Sunday: "Sunday league", Rec: "Recreational" } }
+  };
+  const people = {};
+  TEAMS.forEach(function (t) { data[t].forEach(function (p) { people[p.name] = p; }); });
+  document.getElementById("kicker").textContent = meta.kicker + " \\u00b7 " + meta.heading;
+
+  // state.bibs / state.non_bibs hold the custom order: row i on the left pairs
+  // with row i on the right. Position and ability views regroup it for display
+  // without changing it, so switching back to custom finds the pairs intact.
+  function fresh() {
+    const s = {};
+    TEAMS.forEach(function (t) {
+      s[t] = data[t].slice().sort(function (x, y) { return y.rating - x.rating; })
+        .map(function (p) { return p.name; });
+    });
+    return s;
+  }
+  function valid(s) {
+    if (!s || !Array.isArray(s.bibs) || !Array.isArray(s.non_bibs)) { return false; }
+    const all = s.bibs.concat(s.non_bibs);
+    return all.length === Object.keys(people).length && new Set(all).size === all.length &&
+      all.every(function (n) { return people[n]; });
+  }
+  function load(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
+  function store(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) {} }
+
+  let state = valid(load(meta.key)) ? load(meta.key) : fresh();
+  let mode = GROUPS[load(meta.key + "-mode")] ? load(meta.key + "-mode") : "custom";
+  let selected = null;
+  const history = [];
+
+  function commit(next) {
+    history.push(JSON.stringify(state));
+    if (history.length > 100) { history.shift(); }
+    state = next;
+    store(meta.key, state);
+  }
+  function copyState() { return { bibs: state.bibs.slice(), non_bibs: state.non_bibs.slice() }; }
+  function teamOf(name) { return state.bibs.indexOf(name) >= 0 ? "bibs" : "non_bibs"; }
+
+  const fmt = function (v) { return v.toFixed(1); };
+  const sum = function (names) { return names.reduce(function (a, n) { return a + people[n].rating; }, 0); };
+  const byRating = function (a, b) { return people[b].rating - people[a].rating || a.localeCompare(b); };
+  const grip = '<svg width="10" height="16" viewBox="0 0 10 16" fill="currentColor" aria-hidden="true"><circle cx="3" cy="3" r="1.4"/><circle cx="7" cy="3" r="1.4"/><circle cx="3" cy="8" r="1.4"/><circle cx="7" cy="8" r="1.4"/><circle cx="3" cy="13" r="1.4"/><circle cx="7" cy="13" r="1.4"/></svg>';
+
+  function cardFor(name) {
+    const p = people[name];
+    const el = document.createElement("div");
+    el.className = "card";
+    el.dataset.name = name;
+    el.tabIndex = 0;
+    el.setAttribute("role", "button");
+    el.innerHTML = '<span class="grip" aria-hidden="true">' + grip + '</span>' +
+      '<span class="who"><span class="name"></span><span class="meta"><span class="pos"></span><span class="more"></span></span></span>' +
+      '<span class="rating"></span>';
+    el.querySelector(".name").textContent = name + (p.captain ? " (C)" : "");
+    el.querySelector(".pos").textContent = p.position;
+    // the grouping in force is already in the header, so show the other facts
+    const facts = [p.ability, p.fitness, p.workrate].concat(p.vet ? [p.vet] : []);
+    el.querySelector(".more").textContent = " \\u00b7 " + facts.join(" \\u00b7 ");
+    el.querySelector(".rating").textContent = fmt(p.rating);
+    if (name === selected) { el.classList.add("selected"); }
+    el.setAttribute("aria-label", name + ", " + p.position + ", " + fmt(p.rating) + ", " + LABEL[teamOf(name)]);
+    return el;
+  }
+
+  function groupsFor() {
+    if (mode === "custom") { return [{ id: null, label: null, bibs: state.bibs, non_bibs: state.non_bibs }]; }
+    const g = GROUPS[mode];
+    return g.order.map(function (id) {
+      const pick = function (t) {
+        return state[t].filter(function (n) { return people[n][g.key] === id; }).sort(byRating);
+      };
+      return { id: id, label: g.names[id], bibs: pick("bibs"), non_bibs: pick("non_bibs") };
+    }).filter(function (grp) { return grp.bibs.length || grp.non_bibs.length; });
+  }
+
+  function render(flash) {
+    const root = document.getElementById("groups");
+    root.innerHTML = "";
+    groupsFor().forEach(function (grp) {
+      const left = grp.bibs, right = grp.non_bibs;
+      const rows = Math.max(left.length, right.length);
+      const sec = document.createElement("section");
+      sec.className = "group";
+      if (grp.label) {
+        const off = left.length !== right.length;
+        sec.innerHTML = '<div class="group-head"><span class="group-name"></span><span class="group-sum"></span></div>';
+        sec.querySelector(".group-name").textContent = grp.label;
+        sec.querySelector(".group-sum").innerHTML =
+          '<b class="bibs-c">' + left.length + '</b> \\u00b7 ' + fmt(sum(left)) +
+          ' <span class="' + (off ? "off" : "") + '">v</span> ' +
+          fmt(sum(right)) + ' \\u00b7 <b class="nonbibs-c">' + right.length + '</b>';
+      }
+      const wrap = document.createElement("div");
+      wrap.className = "rows";
+      wrap.innerHTML = '<div class="list bibs"></div><div class="gutter"></div><div class="list non_bibs"></div>';
+      [["bibs", left], ["non_bibs", right]].forEach(function (pair) {
+        const list = wrap.querySelector(".list." + pair[0]);
+        list.dataset.team = pair[0];
+        list.dataset.group = grp.id === null ? "" : grp.id;
+        pair[1].forEach(function (n) {
+          const card = cardFor(n);
+          if (flash && flash.indexOf(n) >= 0) { card.classList.add("flash"); }
+          list.appendChild(card);
+        });
+        for (let i = pair[1].length; i < rows; i++) {
+          const e = document.createElement("div"); e.className = "empty"; e.textContent = "no pair"; list.appendChild(e);
+        }
+      });
+      const gutter = wrap.querySelector(".gutter");
+      for (let i = 0; i < rows; i++) {
+        const d = document.createElement("div");
+        d.className = "delta";
+        if (left[i] && right[i]) {
+          const diff = people[left[i]].rating - people[right[i]].rating;
+          if (Math.abs(diff) < 0.05) { d.classList.add("e"); d.textContent = "="; d.title = "Level"; }
+          else if (diff > 0) { d.classList.add("l"); d.textContent = "\\u25c2" + fmt(diff); d.title = "Bibs stronger by " + fmt(diff); }
+          else { d.classList.add("r"); d.textContent = fmt(-diff) + "\\u25b8"; d.title = "Non-bibs stronger by " + fmt(-diff); }
+        }
+        gutter.appendChild(d);
+      }
+      sec.appendChild(wrap);
+      root.appendChild(sec);
+    });
+
+    TEAMS.forEach(function (t) {
+      const names = state[t];
+      const count = function (pos) { return names.filter(function (n) { return people[n].position === pos; }).length; };
+      const shape = (count("GK") ? count("GK") + " GK \\u00b7 " : "") + [count("DEF"), count("MID"), count("ATT")].join("-");
+      document.getElementById(t + "-total").textContent = fmt(sum(names));
+      document.getElementById(t + "-sub").textContent = names.length + " players \\u00b7 " + shape;
+    });
+    const diff = sum(state.bibs) - sum(state.non_bibs);
+    const gap = document.getElementById("gap");
+    gap.classList.toggle("even", Math.abs(diff) < 0.5);
+    gap.textContent = Math.abs(diff) < 0.05 ? "Level" : (diff > 0 ? "\\u25c2 " : "") + fmt(Math.abs(diff)) + (diff < 0 ? " \\u25b8" : "");
+
+    document.querySelectorAll(".seg button").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.dataset.mode === mode ? "true" : "false");
+    });
+    document.getElementById("undo").disabled = !history.length;
+    document.getElementById("hint").textContent = mode === "custom"
+      ? "Tap a player, then a player on the other side, to swap them. Drag by the grip to re-pair or move someone across."
+      : "Tap a player, then a player on the other side, to swap them. Drag by the grip to move someone across.";
+
+    const prompt = document.getElementById("prompt");
+    prompt.hidden = !selected;
+    if (selected) {
+      const other = teamOf(selected) === "bibs" ? "non_bibs" : "bibs";
+      document.getElementById("prompt-text").innerHTML = "Tap a player on " + LABEL[other] + " to swap with <b></b>";
+      document.getElementById("prompt-text").querySelector("b").textContent = selected;
+    }
+  }
+
+  // --- tap to swap ---
+  function tap(name) {
+    if (!selected) { selected = name; render(); return; }
+    if (selected === name) { selected = null; render(); return; }
+    const a = selected, ta = teamOf(a), tb = teamOf(name);
+    if (ta === tb && mode !== "custom") { selected = name; render(); return; }
+    const next = copyState();
+    const i = next[ta].indexOf(a), j = next[tb].indexOf(name);
+    next[ta][i] = name;
+    next[tb][j] = a;
+    commit(next);
+    selected = null;
+    render([a, name]);
+  }
+  document.getElementById("prompt-cancel").addEventListener("click", function () { selected = null; render(); });
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape" && selected) { selected = null; render(); }
+    if ((ev.key === "Enter" || ev.key === " ") && ev.target.classList && ev.target.classList.contains("card")) {
+      ev.preventDefault();
+      const name = ev.target.dataset.name;
+      tap(name);
+      const again = document.querySelector('.card[data-name="' + CSS.escape(name) + '"]');
+      if (again) { again.focus(); }
+    }
+  });
+
+  // --- pointer: a short press is a tap, a press that moves is a drag.
+  // Touch drags start from the grip only, so the page still scrolls. ---
+  let press = null, drag = null;
+
+  document.addEventListener("pointerdown", function (ev) {
+    const card = ev.target.closest(".card");
+    if (!card || card.classList.contains("ghost") || ev.button > 0) { return; }
+    const canDrag = ev.pointerType === "mouse" || !!ev.target.closest(".grip");
+    if (canDrag) { ev.preventDefault(); }
+    press = { card: card, x: ev.clientX, y: ev.clientY, id: ev.pointerId, canDrag: canDrag };
+  });
+
+  function startDrag(ev) {
+    const card = press.card;
+    const rect = card.getBoundingClientRect();
+    const name = card.dataset.name;
+    const group = card.parentNode.dataset.group;
+    const ph = document.createElement("div");
+    ph.className = "placeholder";
+    card.parentNode.insertBefore(ph, card);
+    card.classList.add("ghost");
+    card.classList.remove("selected");
+    card.style.width = rect.width + "px";
+    card.style.left = rect.left + "px";
+    card.style.top = rect.top + "px";
+    document.body.appendChild(card);
+    document.querySelectorAll(".list").forEach(function (l) {
+      l.classList.toggle("open", l.dataset.group === group);
+    });
+    document.body.classList.add("dragging");
+    drag = { name: name, from: teamOf(name), card: card, ph: ph,
+             dx: press.x - rect.left, dy: press.y - rect.top, id: ev.pointerId };
+  }
+
+  function listAt(x, y) {
+    let best = null, bestDist = Infinity;
+    document.querySelectorAll(".list.open").forEach(function (l) {
+      const r = l.getBoundingClientRect();
+      const dx = x < r.left ? r.left - x : x > r.right ? x - r.right : 0;
+      const dy = y < r.top ? r.top - y : y > r.bottom ? y - r.bottom : 0;
+      const d = dx * dx + dy * dy;
+      if (d < bestDist) { bestDist = d; best = l; }
+    });
+    return best;
+  }
+
+  document.addEventListener("pointermove", function (ev) {
+    if (press && !drag && ev.pointerId === press.id && press.canDrag &&
+        Math.hypot(ev.clientX - press.x, ev.clientY - press.y) > 5) {
+      startDrag(ev);
+    }
+    if (!drag || ev.pointerId !== drag.id) { return; }
+    drag.card.style.left = (ev.clientX - drag.dx) + "px";
+    drag.card.style.top = (ev.clientY - drag.dy) + "px";
+    const list = listAt(ev.clientX, ev.clientY);
+    if (!list) { return; }
+    let before = null;
+    const cards = list.querySelectorAll(".card");
+    for (let i = 0; i < cards.length; i++) {
+      const r = cards[i].getBoundingClientRect();
+      if (ev.clientY < r.top + r.height / 2) { before = cards[i]; break; }
+    }
+    if (!before) { before = list.querySelector(".empty"); }
+    if (before) { list.insertBefore(drag.ph, before); } else { list.appendChild(drag.ph); }
+    const edge = 60;
+    if (ev.clientY < edge) { window.scrollBy(0, -12); }
+    else if (ev.clientY > window.innerHeight - edge) { window.scrollBy(0, 12); }
+  });
+
+  function finish(ev) {
+    if (press && ev.pointerId === press.id && !drag) {
+      const card = press.card;
+      press = null;
+      if (ev.type === "pointerup") { tap(card.dataset.name); }
+      return;
+    }
+    press = null;
+    if (!drag || ev.pointerId !== drag.id) { return; }
+    const list = drag.ph.parentNode;
+    const name = drag.name, from = drag.from;
+    drag.card.remove();
+    document.body.classList.remove("dragging");
+    const d = drag;
+    drag = null;
+    if (!list || !list.classList.contains("list") || ev.type === "pointercancel") { render(); return; }
+    const to = list.dataset.team;
+    const next = copyState();
+    if (mode === "custom") {
+      const order = [];
+      Array.prototype.forEach.call(list.children, function (c) {
+        if (c === d.ph) { order.push(name); }
+        else if (c.classList.contains("card")) { order.push(c.dataset.name); }
+      });
+      if (to !== from) { next[from] = next[from].filter(function (n) { return n !== name; }); }
+      next[to] = order;
+    } else if (to !== from) {
+      // sorted views have no order to drop into: keep his pairing row if he can
+      const at = next[from].indexOf(name);
+      next[from].splice(at, 1);
+      next[to].splice(Math.min(at, next[to].length), 0, name);
+    } else {
+      render();
+      return;
+    }
+    if (JSON.stringify(next) !== JSON.stringify(state)) { commit(next); }
+    selected = null;
+    render([name]);
+  }
+  document.addEventListener("pointerup", finish);
+  document.addEventListener("pointercancel", finish);
+
+  document.querySelectorAll(".seg button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      mode = b.dataset.mode;
+      store(meta.key + "-mode", mode);
+      render();
+    });
+  });
+  document.getElementById("undo").addEventListener("click", function () {
+    if (!history.length) { return; }
+    state = JSON.parse(history.pop());
+    store(meta.key, state);
+    selected = null;
+    render();
+  });
+  document.getElementById("reset").addEventListener("click", function () {
+    commit(fresh());
+    selected = null;
+    render();
+  });
+  document.getElementById("copy").addEventListener("click", function (ev) {
+    const lines = [meta.heading + ", " + meta.kicker];
+    [["BIBS", "bibs"], ["NON-BIBS", "non_bibs"]].forEach(function (pair) {
+      lines.push("", pair[0]);
+      state[pair[1]].forEach(function (n) { lines.push("  " + n + " (" + people[n].position + ")"); });
+    });
+    const btn = ev.currentTarget;
+    const say = function (t) { btn.textContent = t; setTimeout(function () { btn.textContent = "Copy teams"; }, 1600); };
+    navigator.clipboard.writeText(lines.join("\\n")).then(function () { say("Copied"); }, function () { say("Copy blocked"); });
+  });
+
+  render();
+})();
+</script>
+"""

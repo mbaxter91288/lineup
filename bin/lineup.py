@@ -31,6 +31,7 @@ import urllib.parse
 import uuid
 from pathlib import Path
 
+import render_board
 import render_html
 import render_squad
 import shape
@@ -693,6 +694,20 @@ def print_split(rank: int, split: tuple[float, list[dict], list[dict]]) -> None:
 
 # --- commands ----------------------------------------------------------------
 
+def write_board_page(bibs: list[dict], non_bibs: list[dict], *, date: str,
+                     location: dict | None) -> Path:
+    """The private team builder: both sides to pair, swap and re-sort by hand."""
+    day = dt.date.fromisoformat(date)
+    meta = _meta(date, (len(bibs), len(non_bibs)), location,
+                 title=f"Team Builder {day.strftime('%-d %b')}",
+                 status="", mode="admin", score=None, recommended=0)
+    meta["date"] = date
+    path = ARTIFACTS / f"board-{date}.html"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(render_board.render(render_board.build_payload(bibs, non_bibs, meta)))
+    return path
+
+
 def write_squad_page() -> Path:
     """Rewrite artifacts/squad.html from the player folders."""
     ARTIFACTS.mkdir(exist_ok=True)
@@ -991,6 +1006,30 @@ def apply_lineup(game: dict, side: str, shape_name: str | None,
     return unknown
 
 
+def cmd_board(args) -> int:
+    if args.game_id:
+        game = load_game(args.game_id)
+        players = game_players(game)
+        bibs = [players[pid] for pid in game["teams"]["bibs"]]
+        non_bibs = [players[pid] for pid in game["teams"]["non_bibs"]]
+        date, location = game["date"], game.get("location")
+    else:
+        if not args.names:
+            print("Give a game id, or --names to start from a balanced split.", file=sys.stderr)
+            return 1
+        squad, unknown = resolve(parse_names(args.names), load_players())
+        if unknown:
+            print("Unknown players — add them first: " + ", ".join(unknown), file=sys.stderr)
+            return 1
+        squad += [guest_player(name, squad) for name in args.guest or []]
+        splits = balance(squad, options=3, seed=args.seed)
+        pick, _ = recommend(squad, splits)
+        _, bibs, non_bibs = splits[pick]
+        date, location = args.date or today(), location_from(args.location)
+    print(f"Board -> {write_board_page(bibs, non_bibs, date=date, location=location)}")
+    return 0
+
+
 def cmd_page(args) -> int:
     game = load_game(args.game_id)
     changed = False
@@ -1128,6 +1167,15 @@ def main() -> int:
     p_score.add_argument("--own-goal", action="append", metavar="NAME[:GOALS]", dest="own_goal",
                          help='who put one in their own net; it counts for the other team')
     p_score.set_defaults(func=cmd_score)
+
+    p_board = sub.add_parser("board", help="write the drag-and-swap team builder page")
+    p_board.add_argument("game_id", nargs="?", help="start from this game's teams")
+    p_board.add_argument("--names", help="or start from the balancer's pick for this list")
+    p_board.add_argument("--guest", action="append", metavar="NAME")
+    p_board.add_argument("--seed", type=int)
+    p_board.add_argument("--date", help="game date, YYYY-MM-DD (default today)")
+    p_board.add_argument("--location")
+    p_board.set_defaults(func=cmd_board)
 
     p_page = sub.add_parser("page", help="rewrite a game's page")
     p_page.add_argument("game_id")

@@ -139,6 +139,15 @@ Never put a rating, a fitness score or a balance number on the player page, and 
 
 `./bin/lineup.py page <game-id>` rewrites both pages by hand if needed.
 
+## The team builder
+
+When the user wants to pick or tweak the teams by hand, write the builder and publish it (football icon):
+```
+./bin/lineup.py board <game-id>            # start from a saved game's teams
+./bin/lineup.py board --names "<list>"     # or from the balancer's pick
+```
+It writes `artifacts/board-<date>.html`: bibs and non-bibs side by side, row for row, with the rating gap on each pair. It orders by **custom** (the drag order, for pairing), **position** or **ability**, and switching view never loses the custom pairs. Tap a player then one on the other side to swap them; drag by the grip to re-pair or move someone across; Undo steps back. It carries ratings, so it stays private. Nothing saves back to the repo: the user pastes the output of its Copy teams button, and those teams go in with `balance --commit --bibs` (or, for a game already saved, by editing its team lists and running `page`). Regenerate it when the squad changes.
+
 ## Editing bands by hand
 
 `./bin/lineup.py edit` serves a local page on `http://127.0.0.1:8765` and opens it. Every player is a row of dropdowns — position, ability, fitness, workrate, vet — plus a captain tick, with the rating recalculating live. The page opens with a card spelling out how a rating is worked out — the weights, every band's value and the veteran modifiers. Under each of the three banded dropdowns is a slider for nudging the player within that band; it cannot leave the band, and picking a new band re-centres it. **Save writes straight back to `players/<uuid>/data.json`** and rewrites `artifacts/squad.html`. Ctrl-C stops the server.
