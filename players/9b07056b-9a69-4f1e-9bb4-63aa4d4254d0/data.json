@@ -1,0 +1,20 @@
+{
+  "id": "9b07056b-9a69-4f1e-9bb4-63aa4d4254d0",
+  "name": "Jamaal Ibrahim",
+  "aliases": [
+    "Jamal"
+  ],
+  "position": "MID",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "sunday_league",
+  "vet": "none",
+  "workrate": "steady",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Midfielder, Sunday league standard, moderate fitness, steady workrate. No more detail yet.",
+  "created_at": "2026-10-29",
+  "updated_at": "2026-10-29"
+}

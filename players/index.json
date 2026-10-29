@@ -103,6 +103,13 @@
       "aliases": []
     },
     {
+      "id": "9b07056b-9a69-4f1e-9bb4-63aa4d4254d0",
+      "name": "Jamaal Ibrahim",
+      "aliases": [
+        "Jamal"
+      ]
+    },
+    {
       "id": "bf8b66bd-8a8f-42de-96e1-cfdfa1de8233",
       "name": "Joe Peacock",
       "aliases": []
@@ -111,6 +118,13 @@
       "id": "6c9c2a61-1396-4911-9845-e1d07503ef9a",
       "name": "John Bassil",
       "aliases": []
+    },
+    {
+      "id": "f0a1ec15-42b9-4031-b749-c8a769ade262",
+      "name": "Josh Walker-Croft",
+      "aliases": [
+        "Josh"
+      ]
     },
     {
       "id": "b085e93b-3f51-43f7-937a-a9322b15a61f",
@@ -145,6 +159,11 @@
     {
       "id": "0e6c4ad1-0bb1-4012-b7ab-4bfe2f1895e6",
       "name": "Mat Baxter",
+      "aliases": []
+    },
+    {
+      "id": "cf6af3f8-d94e-445d-b8a6-92ae4dc31836",
+      "name": "Matt Willis",
       "aliases": []
     },
     {

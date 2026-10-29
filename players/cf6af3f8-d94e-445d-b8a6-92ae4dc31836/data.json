@@ -1,0 +1,18 @@
+{
+  "id": "cf6af3f8-d94e-445d-b8a6-92ae4dc31836",
+  "name": "Matt Willis",
+  "aliases": [],
+  "position": "GK",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": true,
+  "captain": false,
+  "ability": "sunday_league",
+  "vet": "veteran",
+  "workrate": "steady",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Goalkeeper, Sunday league standard. Veteran. Stays in goal.",
+  "created_at": "2026-10-29",
+  "updated_at": "2026-10-29"
+}
