@@ -1,0 +1,18 @@
+{
+  "id": "a17c23e8-6488-4ea3-b665-ddf93c43c379",
+  "name": "James Key",
+  "aliases": [],
+  "position": "MID",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "sunday_league",
+  "vet": "none",
+  "workrate": "steady",
+  "rating_override": null,
+  "fitness": "good",
+  "profile": "Not great, but not the worst. Gets about the pitch.",
+  "created_at": "2026-11-05",
+  "updated_at": "2026-11-05"
+}

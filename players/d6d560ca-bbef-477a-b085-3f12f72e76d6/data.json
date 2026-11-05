@@ -1,0 +1,18 @@
+{
+  "id": "d6d560ca-bbef-477a-b085-3f12f72e76d6",
+  "name": "Alfie Buckley",
+  "aliases": [],
+  "position": "DEF",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "saturday",
+  "vet": "veteran",
+  "workrate": "grafter",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "Decent player. Calm on the ball and a solid all-round defender.",
+  "created_at": "2026-11-05",
+  "updated_at": "2026-11-05"
+}
