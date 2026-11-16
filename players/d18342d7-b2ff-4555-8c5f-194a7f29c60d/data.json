@@ -1,0 +1,18 @@
+{
+  "id": "d18342d7-b2ff-4555-8c5f-194a7f29c60d",
+  "name": "James Anderson",
+  "aliases": [],
+  "position": "DEF",
+  "preferred_positions": [],
+  "negative_positions": [],
+  "permanent_keeper": false,
+  "captain": false,
+  "ability": "sunday_league",
+  "vet": "none",
+  "workrate": "steady",
+  "rating_override": null,
+  "fitness": "moderate",
+  "profile": "New player, rated just under middle range until we see him play.",
+  "created_at": "2026-11-16",
+  "updated_at": "2026-11-16"
+}
